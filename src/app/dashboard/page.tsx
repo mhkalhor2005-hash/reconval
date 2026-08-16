@@ -30,14 +30,20 @@ function StatTile({ label, value, accent }: { label: string; value: number | str
 }
 
 export default async function DashboardPage() {
-  const overview = overviewCounts() as Overview;
-  const reps = repPerformance() as RepRow[];
-  const samples = sampleConsumption(30) as SampleRow[];
+  const [overviewRaw, repsRaw, samplesRaw, mapVisitsRaw] = await Promise.all([
+    overviewCounts(),
+    repPerformance(),
+    sampleConsumption(30),
+    visitsForMap(14),
+  ]);
+  const overview = overviewRaw as Overview;
+  const reps = repsRaw as RepRow[];
+  const samples = samplesRaw as SampleRow[];
   // node:sqlite row objects aren't plain objects (they fail the RSC
   // serialization boundary), so re-map to plain literals before handing
   // them to the client-side map component.
   const mapVisits = (
-    visitsForMap(14) as {
+    mapVisitsRaw as {
       id: number;
       lat: number;
       lng: number;

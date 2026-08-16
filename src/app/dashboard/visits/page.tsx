@@ -2,7 +2,7 @@ import Link from "next/link";
 import { listAllVisits, OUTCOME_LABELS, type Outcome } from "@/lib/repo/visits";
 
 export default async function AllVisitsPage() {
-  const visits = listAllVisits({ limit: 200 }) as {
+  const visits = (await listAllVisits({ limit: 200 })) as {
     id: number;
     doctor_id: number;
     doctor_name: string;

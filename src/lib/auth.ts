@@ -54,9 +54,9 @@ export async function getSessionUser() {
   const payload = await verifySessionToken(token);
   if (!payload) return null;
   const db = getDb();
-  const row = db
+  const row = (await db
     .prepare(`SELECT id, name, username, role, region, monthly_target FROM users WHERE id = ? AND active = 1`)
-    .get(Number(payload.sub)) as
+    .get(Number(payload.sub))) as
     | { id: number; name: string; username: string; role: Role; region: string | null; monthly_target: number }
     | undefined;
   if (!row) return null;

@@ -14,7 +14,7 @@ export default async function DoctorsPage({
   searchParams: Promise<{ q?: string }>;
 }) {
   const { q } = await searchParams;
-  const doctors = listDoctors(q);
+  const doctors = await listDoctors(q);
 
   return (
     <div className="space-y-4">

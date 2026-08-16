@@ -4,7 +4,7 @@ import RepForm from "@/components/RepForm";
 
 export default async function EditRepPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const rep = getRep(Number(id));
+  const rep = await getRep(Number(id));
   if (!rep || rep.role !== "REP") notFound();
   // node:sqlite rows aren't plain objects and can't cross the Server->Client
   // Component boundary as-is — remap to a plain literal first.

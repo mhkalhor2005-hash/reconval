@@ -3,8 +3,8 @@ import { inventorySummaryAllReps } from "@/lib/repo/inventory";
 import NewProductForm from "@/components/NewProductForm";
 
 export default async function ProductsPage() {
-  const products = listProducts();
-  const inventory = inventorySummaryAllReps() as {
+  const products = await listProducts();
+  const inventory = (await inventorySummaryAllReps()) as {
     rep_id: number;
     rep_name: string;
     product_name: string;

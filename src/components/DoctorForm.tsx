@@ -10,17 +10,36 @@ const FACILITY_OPTIONS = [
   { value: "PHARMACY", label: "داروخانه" },
 ];
 
-export default function DoctorForm({ basePath }: { basePath: "/dashboard" | "/app" }) {
+type DoctorInitial = {
+  id: number;
+  name: string;
+  specialty: string | null;
+  facility_type: string;
+  address: string | null;
+  phone: string | null;
+  notes: string | null;
+  lat: number | null;
+  lng: number | null;
+};
+
+export default function DoctorForm({
+  basePath,
+  initial,
+}: {
+  basePath: "/dashboard" | "/app";
+  initial?: DoctorInitial;
+}) {
   const router = useRouter();
+  const editing = !!initial;
   const [form, setForm] = useState({
-    name: "",
-    specialty: "",
-    facility_type: "OFFICE",
-    address: "",
-    phone: "",
-    notes: "",
-    lat: "" as string | number,
-    lng: "" as string | number,
+    name: initial?.name ?? "",
+    specialty: initial?.specialty ?? "",
+    facility_type: initial?.facility_type ?? "OFFICE",
+    address: initial?.address ?? "",
+    phone: initial?.phone ?? "",
+    notes: initial?.notes ?? "",
+    lat: (initial?.lat ?? "") as string | number,
+    lng: (initial?.lng ?? "") as string | number,
   });
   const [locating, setLocating] = useState(false);
   const [error, setError] = useState("");
@@ -52,8 +71,10 @@ export default function DoctorForm({ basePath }: { basePath: "/dashboard" | "/ap
       return;
     }
     setSaving(true);
-    const res = await fetch("/api/doctors", {
-      method: "POST",
+    const url = editing ? `/api/doctors/${initial!.id}` : "/api/doctors";
+    const method = editing ? "PUT" : "POST";
+    const res = await fetch(url, {
+      method,
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         ...form,
@@ -67,7 +88,8 @@ export default function DoctorForm({ basePath }: { basePath: "/dashboard" | "/ap
       setError(data.error || "خطا در ذخیره اطلاعات.");
       return;
     }
-    router.push(`${basePath}/doctors/${data.id}`);
+    const targetId = editing ? initial!.id : data.id;
+    router.push(`${basePath}/doctors/${targetId}`);
     router.refresh();
   }
 
@@ -157,7 +179,7 @@ export default function DoctorForm({ basePath }: { basePath: "/dashboard" | "/ap
         disabled={saving}
         className="w-full rounded-lg bg-brand py-2.5 font-semibold text-white hover:bg-brand-dark disabled:opacity-60 sm:w-auto sm:px-8"
       >
-        {saving ? "در حال ذخیره..." : "ذخیره پزشک"}
+        {saving ? "در حال ذخیره..." : editing ? "ذخیره تغییرات" : "ذخیره پزشک"}
       </button>
     </form>
   );

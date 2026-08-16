@@ -29,12 +29,13 @@ export default async function AllVisitsPage() {
               <th className="px-4 py-2 text-right font-medium">مدت (دقیقه)</th>
               <th className="px-4 py-2 text-right font-medium">نتیجه</th>
               <th className="px-4 py-2 text-right font-medium">منبع</th>
+              <th className="px-4 py-2 text-right font-medium"></th>
             </tr>
           </thead>
           <tbody>
             {visits.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-neutral-400">
+                <td colSpan={7} className="px-4 py-8 text-center text-neutral-400">
                   ویزیتی ثبت نشده است.
                 </td>
               </tr>
@@ -55,6 +56,11 @@ export default async function AllVisitsPage() {
                   <td className="px-4 py-2.5 text-neutral-500">{durationMin ?? "در حال انجام"}</td>
                   <td className="px-4 py-2.5">{v.outcome ? OUTCOME_LABELS[v.outcome] : "—"}</td>
                   <td className="px-4 py-2.5 text-xs text-neutral-400">{v.offline_created ? "همگام‌سازی آفلاین" : "برخط"}</td>
+                  <td className="px-4 py-2.5 text-left">
+                    <Link href={`/dashboard/visits/${v.id}/edit`} className="text-xs font-medium text-brand-dark hover:underline">
+                      ✏️ ویرایش
+                    </Link>
+                  </td>
                 </tr>
               );
             })}

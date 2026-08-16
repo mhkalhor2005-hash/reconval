@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDoctor, doctorVisitHistory } from "@/lib/repo/doctors";
 import { OUTCOME_LABELS, type Outcome } from "@/lib/repo/visits";
@@ -30,9 +31,17 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
             <h1 className="text-xl font-bold text-neutral-900">{doctor.name}</h1>
             <p className="text-sm text-neutral-500">{doctor.specialty || "—"}</p>
           </div>
-          <span className="rounded-full bg-brand-light px-3 py-1 text-xs font-medium text-brand-dark">
-            {FACILITY_LABEL[doctor.facility_type] ?? doctor.facility_type}
-          </span>
+          <div className="flex shrink-0 items-center gap-2">
+            <span className="rounded-full bg-brand-light px-3 py-1 text-xs font-medium text-brand-dark">
+              {FACILITY_LABEL[doctor.facility_type] ?? doctor.facility_type}
+            </span>
+            <Link
+              href={`/dashboard/doctors/${id}/edit`}
+              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100"
+            >
+              ✏️ ویرایش
+            </Link>
+          </div>
         </div>
         <dl className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
           <div>
@@ -69,12 +78,13 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
               <th className="px-4 py-2 text-right font-medium">ویزیتور</th>
               <th className="px-4 py-2 text-right font-medium">نتیجه</th>
               <th className="px-4 py-2 text-right font-medium">یادداشت</th>
+              <th className="px-4 py-2 text-right font-medium"></th>
             </tr>
           </thead>
           <tbody>
             {history.length === 0 && (
               <tr>
-                <td colSpan={4} className="px-4 py-8 text-center text-neutral-400">
+                <td colSpan={5} className="px-4 py-8 text-center text-neutral-400">
                   هنوز ویزیتی ثبت نشده است.
                 </td>
               </tr>
@@ -85,6 +95,11 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
                 <td className="px-4 py-2.5 text-neutral-800">{h.rep_name}</td>
                 <td className="px-4 py-2.5">{h.outcome ? OUTCOME_LABELS[h.outcome] : "در حال انجام"}</td>
                 <td className="px-4 py-2.5 text-neutral-500">{h.note || "—"}</td>
+                <td className="px-4 py-2.5 text-left">
+                  <Link href={`/dashboard/visits/${h.id}/edit`} className="text-xs font-medium text-brand-dark hover:underline">
+                    ✏️ ویرایش
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>

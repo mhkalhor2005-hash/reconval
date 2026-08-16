@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getRep } from "@/lib/repo/users";
 import { listRepInventory } from "@/lib/repo/inventory";
@@ -30,11 +31,19 @@ export default async function RepDetailPage({ params }: { params: Promise<{ id: 
 
   return (
     <div className="max-w-4xl space-y-6">
-      <div className="card p-5">
-        <h1 className="text-xl font-bold text-neutral-900">{rep.name}</h1>
-        <p className="text-sm text-neutral-500">
-          منطقه: {rep.region ?? "—"} · هدف ماهانه: {rep.monthly_target} ویزیت
-        </p>
+      <div className="card flex items-start justify-between gap-3 p-5">
+        <div>
+          <h1 className="text-xl font-bold text-neutral-900">{rep.name}</h1>
+          <p className="text-sm text-neutral-500">
+            منطقه: {rep.region ?? "—"} · هدف ماهانه: {rep.monthly_target} ویزیت · نام کاربری: {rep.username}
+          </p>
+        </div>
+        <Link
+          href={`/dashboard/reps/${id}/edit`}
+          className="shrink-0 rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100"
+        >
+          ✏️ ویرایش
+        </Link>
       </div>
 
       <div className="card overflow-hidden">

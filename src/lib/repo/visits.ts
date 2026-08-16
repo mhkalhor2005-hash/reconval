@@ -110,6 +110,33 @@ export function listAllVisits(opts: { limit?: number; sinceDays?: number } = {})
     .all(limit);
 }
 
+export function getVisit(visitId: number) {
+  const db = getDb();
+  return db
+    .prepare(
+      `SELECT v.*, d.name as doctor_name, u.name as rep_name
+       FROM visits v JOIN doctors d ON d.id = v.doctor_id JOIN users u ON u.id = v.rep_id
+       WHERE v.id = ?`
+    )
+    .get(visitId);
+}
+
+// Manager-side correction: unlike endVisit (which only the owning rep can call
+// on a still-open visit), this lets a manager fix the outcome/note on any
+// visit after the fact, without touching inventory or sample deliveries.
+export function updateVisitByManager(visitId: number, input: { outcome?: Outcome; note?: string }) {
+  const db = getDb();
+  const visit = db.prepare(`SELECT id FROM visits WHERE id = ?`).get(visitId);
+  if (!visit) throw new Error("ویزیت پیدا نشد.");
+  if (input.outcome !== undefined) {
+    db.prepare(`UPDATE visits SET outcome = ? WHERE id = ?`).run(input.outcome, visitId);
+  }
+  if (input.note !== undefined) {
+    db.prepare(`UPDATE visits SET note = ? WHERE id = ?`).run(input.note, visitId);
+  }
+  return true;
+}
+
 export function getVisitDeliveries(visitId: number) {
   const db = getDb();
   return db

@@ -4,7 +4,7 @@ import EditVisitForm from "@/components/EditVisitForm";
 
 export default async function EditVisitPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const raw = getVisit(Number(id)) as
+  const raw = (await getVisit(Number(id))) as
     | { id: number; doctor_id: number; doctor_name: string; rep_name: string; checkin_at: string; outcome: string | null; note: string | null }
     | undefined;
   if (!raw) notFound();

@@ -7,9 +7,9 @@ export async function GET(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   if (user.role === "MANAGER") {
     const sinceDays = Number(req.nextUrl.searchParams.get("sinceDays") ?? "0") || undefined;
-    return NextResponse.json(listAllVisits({ sinceDays }));
+    return NextResponse.json(await listAllVisits({ sinceDays }));
   }
-  return NextResponse.json(listVisitsForRep(user.id));
+  return NextResponse.json(await listVisitsForRep(user.id));
 }
 
 export async function POST(req: NextRequest) {
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
   if (!body?.doctorId) return NextResponse.json({ error: "پزشک انتخاب نشده است." }, { status: 400 });
   try {
-    const id = startVisit({
+    const id = await startVisit({
       doctorId: Number(body.doctorId),
       repId: user.id,
       lat: body.lat ?? null,

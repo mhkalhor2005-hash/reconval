@@ -1,6 +1,6 @@
 import { getDb } from "@/lib/db";
 
-export function listRepInventory(repId: number) {
+export async function listRepInventory(repId: number) {
   const db = getDb();
   return db
     .prepare(
@@ -11,17 +11,17 @@ export function listRepInventory(repId: number) {
     .all(repId);
 }
 
-export function allocateStock(repId: number, productId: number, delta: number) {
+export async function allocateStock(repId: number, productId: number, delta: number) {
   const db = getDb();
-  const existing = db
+  const existing = await db
     .prepare(`SELECT id FROM rep_inventory WHERE rep_id = ? AND product_id = ?`)
     .get(repId, productId);
   if (existing) {
-    db.prepare(
-      `UPDATE rep_inventory SET qty_on_hand = MAX(qty_on_hand + ?, 0) WHERE rep_id = ? AND product_id = ?`
+    await db.prepare(
+      `UPDATE rep_inventory SET qty_on_hand = GREATEST(qty_on_hand + ?, 0) WHERE rep_id = ? AND product_id = ?`
     ).run(delta, repId, productId);
   } else {
-    db.prepare(`INSERT INTO rep_inventory (rep_id, product_id, qty_on_hand) VALUES (?, ?, ?)`).run(
+    await db.prepare(`INSERT INTO rep_inventory (rep_id, product_id, qty_on_hand) VALUES (?, ?, ?)`).run(
       repId,
       productId,
       Math.max(delta, 0)
@@ -29,7 +29,7 @@ export function allocateStock(repId: number, productId: number, delta: number) {
   }
 }
 
-export function inventorySummaryAllReps() {
+export async function inventorySummaryAllReps() {
   const db = getDb();
   return db
     .prepare(

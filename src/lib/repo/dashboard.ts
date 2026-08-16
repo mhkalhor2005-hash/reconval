@@ -17,7 +17,7 @@ function isoStartOfMonthUTC() {
   return d.toISOString();
 }
 
-export function repPerformance() {
+export async function repPerformance() {
   const db = getDb();
   const monthStart = isoStartOfMonthUTC();
   const todayStart = isoStartOfTodayUTC();
@@ -35,7 +35,7 @@ export function repPerformance() {
     .all(monthStart, todayStart);
 }
 
-export function sampleConsumption(sinceDays = 30) {
+export async function sampleConsumption(sinceDays = 30) {
   const db = getDb();
   const since = isoDaysAgo(sinceDays);
   return db
@@ -50,7 +50,7 @@ export function sampleConsumption(sinceDays = 30) {
     .all(since);
 }
 
-export function visitsForMap(sinceDays = 14) {
+export async function visitsForMap(sinceDays = 14) {
   const db = getDb();
   const since = isoDaysAgo(sinceDays);
   return db
@@ -66,7 +66,7 @@ export function visitsForMap(sinceDays = 14) {
     .all(since);
 }
 
-export function overviewCounts() {
+export async function overviewCounts() {
   const db = getDb();
   const weekStart = isoDaysAgo(7);
   const todayStart = isoStartOfTodayUTC();

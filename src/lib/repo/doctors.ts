@@ -13,7 +13,7 @@ export type Doctor = {
   created_at: string;
 };
 
-export function listDoctors(search?: string): Doctor[] {
+export async function listDoctors(search?: string): Promise<Doctor[]> {
   const db = getDb();
   if (search && search.trim()) {
     const q = `%${search.trim()}%`;
@@ -21,17 +21,17 @@ export function listDoctors(search?: string): Doctor[] {
       .prepare(
         `SELECT * FROM doctors WHERE name LIKE ? OR specialty LIKE ? OR address LIKE ? ORDER BY name`
       )
-      .all(q, q, q) as unknown as Doctor[];
+      .all(q, q, q) as unknown as Promise<Doctor[]>;
   }
-  return db.prepare(`SELECT * FROM doctors ORDER BY name`).all() as unknown as Doctor[];
+  return db.prepare(`SELECT * FROM doctors ORDER BY name`).all() as unknown as Promise<Doctor[]>;
 }
 
-export function getDoctor(id: number): Doctor | undefined {
+export async function getDoctor(id: number): Promise<Doctor | undefined> {
   const db = getDb();
-  return db.prepare(`SELECT * FROM doctors WHERE id = ?`).get(id) as Doctor | undefined;
+  return db.prepare(`SELECT * FROM doctors WHERE id = ?`).get(id) as Promise<Doctor | undefined>;
 }
 
-export function createDoctor(input: {
+export async function createDoctor(input: {
   name: string;
   specialty?: string;
   facility_type: string;
@@ -43,10 +43,10 @@ export function createDoctor(input: {
   created_by?: number;
 }) {
   const db = getDb();
-  const res = db
+  const res = await db
     .prepare(
       `INSERT INTO doctors (name, specialty, facility_type, address, lat, lng, phone, notes, created_by)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id`
     )
     .run(
       input.name,
@@ -62,7 +62,7 @@ export function createDoctor(input: {
   return Number(res.lastInsertRowid);
 }
 
-export function updateDoctor(
+export async function updateDoctor(
   id: number,
   input: Partial<{
     name: string;
@@ -76,10 +76,10 @@ export function updateDoctor(
   }>
 ) {
   const db = getDb();
-  const current = getDoctor(id);
+  const current = await getDoctor(id);
   if (!current) return false;
   const merged = { ...current, ...input };
-  db.prepare(
+  await db.prepare(
     `UPDATE doctors SET name=?, specialty=?, facility_type=?, address=?, lat=?, lng=?, phone=?, notes=? WHERE id=?`
   ).run(
     merged.name,
@@ -95,7 +95,7 @@ export function updateDoctor(
   return true;
 }
 
-export function doctorVisitHistory(id: number) {
+export async function doctorVisitHistory(id: number) {
   const db = getDb();
   return db
     .prepare(

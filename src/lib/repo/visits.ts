@@ -9,7 +9,7 @@ export const OUTCOME_LABELS: Record<Outcome, string> = {
   NEGATIVE: "منفی",
 };
 
-export function getActiveVisit(repId: number) {
+export async function getActiveVisit(repId: number) {
   const db = getDb();
   return db
     .prepare(
@@ -21,7 +21,7 @@ export function getActiveVisit(repId: number) {
     .get(repId);
 }
 
-export function startVisit(input: {
+export async function startVisit(input: {
   doctorId: number;
   repId: number;
   lat?: number | null;
@@ -29,34 +29,34 @@ export function startVisit(input: {
   clientUuid?: string;
 }) {
   const db = getDb();
-  const existing = getActiveVisit(input.repId);
+  const existing = await getActiveVisit(input.repId);
   if (existing) {
     throw new Error("یک ویزیت باز دارید؛ ابتدا آن را پایان دهید.");
   }
   const now = new Date().toISOString();
-  const res = db
+  const res = await db
     .prepare(
       `INSERT INTO visits (doctor_id, rep_id, checkin_at, checkin_lat, checkin_lng, client_uuid)
-       VALUES (?, ?, ?, ?, ?, ?)`
+       VALUES (?, ?, ?, ?, ?, ?) RETURNING id`
     )
     .run(input.doctorId, input.repId, now, input.lat ?? null, input.lng ?? null, input.clientUuid ?? null);
   return Number(res.lastInsertRowid);
 }
 
-export function endVisit(
+export async function endVisit(
   visitId: number,
   repId: number,
   input: { outcome: Outcome; note?: string; deliveries?: { productId: number; qty: number }[] }
 ) {
   const db = getDb();
-  const visit = db.prepare(`SELECT * FROM visits WHERE id = ? AND rep_id = ?`).get(visitId, repId) as
+  const visit = (await db.prepare(`SELECT * FROM visits WHERE id = ? AND rep_id = ?`).get(visitId, repId)) as
     | { id: number; checkout_at: string | null }
     | undefined;
   if (!visit) throw new Error("ویزیت پیدا نشد.");
   if (visit.checkout_at) throw new Error("این ویزیت قبلاً بسته شده است.");
 
   const now = new Date().toISOString();
-  db.prepare(`UPDATE visits SET checkout_at = ?, outcome = ?, note = ? WHERE id = ?`).run(
+  await db.prepare(`UPDATE visits SET checkout_at = ?, outcome = ?, note = ? WHERE id = ?`).run(
     now,
     input.outcome,
     input.note ?? "",
@@ -67,17 +67,17 @@ export function endVisit(
     `INSERT INTO sample_deliveries (visit_id, product_id, qty) VALUES (?, ?, ?)`
   );
   const decInv = db.prepare(
-    `UPDATE rep_inventory SET qty_on_hand = MAX(qty_on_hand - ?, 0) WHERE rep_id = ? AND product_id = ?`
+    `UPDATE rep_inventory SET qty_on_hand = GREATEST(qty_on_hand - ?, 0) WHERE rep_id = ? AND product_id = ?`
   );
   for (const d of input.deliveries ?? []) {
     if (d.qty <= 0) continue;
-    insDelivery.run(visitId, d.productId, d.qty);
-    decInv.run(d.qty, repId, d.productId);
+    await insDelivery.run(visitId, d.productId, d.qty);
+    await decInv.run(d.qty, repId, d.productId);
   }
   return true;
 }
 
-export function listVisitsForRep(repId: number, limit = 50) {
+export async function listVisitsForRep(repId: number, limit = 50) {
   const db = getDb();
   return db
     .prepare(
@@ -88,7 +88,7 @@ export function listVisitsForRep(repId: number, limit = 50) {
     .all(repId, limit);
 }
 
-export function listAllVisits(opts: { limit?: number; sinceDays?: number } = {}) {
+export async function listAllVisits(opts: { limit?: number; sinceDays?: number } = {}) {
   const db = getDb();
   const limit = opts.limit ?? 200;
   if (opts.sinceDays) {
@@ -110,7 +110,7 @@ export function listAllVisits(opts: { limit?: number; sinceDays?: number } = {})
     .all(limit);
 }
 
-export function getVisit(visitId: number) {
+export async function getVisit(visitId: number) {
   const db = getDb();
   return db
     .prepare(
@@ -124,20 +124,20 @@ export function getVisit(visitId: number) {
 // Manager-side correction: unlike endVisit (which only the owning rep can call
 // on a still-open visit), this lets a manager fix the outcome/note on any
 // visit after the fact, without touching inventory or sample deliveries.
-export function updateVisitByManager(visitId: number, input: { outcome?: Outcome; note?: string }) {
+export async function updateVisitByManager(visitId: number, input: { outcome?: Outcome; note?: string }) {
   const db = getDb();
-  const visit = db.prepare(`SELECT id FROM visits WHERE id = ?`).get(visitId);
+  const visit = await db.prepare(`SELECT id FROM visits WHERE id = ?`).get(visitId);
   if (!visit) throw new Error("ویزیت پیدا نشد.");
   if (input.outcome !== undefined) {
-    db.prepare(`UPDATE visits SET outcome = ? WHERE id = ?`).run(input.outcome, visitId);
+    await db.prepare(`UPDATE visits SET outcome = ? WHERE id = ?`).run(input.outcome, visitId);
   }
   if (input.note !== undefined) {
-    db.prepare(`UPDATE visits SET note = ? WHERE id = ?`).run(input.note, visitId);
+    await db.prepare(`UPDATE visits SET note = ? WHERE id = ?`).run(input.note, visitId);
   }
   return true;
 }
 
-export function getVisitDeliveries(visitId: number) {
+export async function getVisitDeliveries(visitId: number) {
   const db = getDb();
   return db
     .prepare(
@@ -151,7 +151,7 @@ export function getVisitDeliveries(visitId: number) {
 // Used by the offline-sync endpoint to insert a fully-formed visit that was
 // captured while the device had no connectivity. client_uuid gives us
 // idempotency: replaying the same action twice is a no-op.
-export function createOfflineVisit(input: {
+export async function createOfflineVisit(input: {
   doctorId: number;
   repId: number;
   checkinAt: string;
@@ -164,13 +164,13 @@ export function createOfflineVisit(input: {
   deliveries?: { productId: number; qty: number }[];
 }) {
   const db = getDb();
-  const existing = db.prepare(`SELECT id FROM visits WHERE client_uuid = ?`).get(input.clientUuid);
+  const existing = await db.prepare(`SELECT id FROM visits WHERE client_uuid = ?`).get(input.clientUuid);
   if (existing) return { id: (existing as { id: number }).id, duplicate: true };
 
-  const res = db
+  const res = await db
     .prepare(
       `INSERT INTO visits (doctor_id, rep_id, checkin_at, checkout_at, checkin_lat, checkin_lng, outcome, note, client_uuid, offline_created)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1)`
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1) RETURNING id`
     )
     .run(
       input.doctorId,
@@ -187,12 +187,12 @@ export function createOfflineVisit(input: {
 
   const insDelivery = db.prepare(`INSERT INTO sample_deliveries (visit_id, product_id, qty) VALUES (?, ?, ?)`);
   const decInv = db.prepare(
-    `UPDATE rep_inventory SET qty_on_hand = MAX(qty_on_hand - ?, 0) WHERE rep_id = ? AND product_id = ?`
+    `UPDATE rep_inventory SET qty_on_hand = GREATEST(qty_on_hand - ?, 0) WHERE rep_id = ? AND product_id = ?`
   );
   for (const d of input.deliveries ?? []) {
     if (d.qty <= 0) continue;
-    insDelivery.run(visitId, d.productId, d.qty);
-    decInv.run(d.qty, input.repId, d.productId);
+    await insDelivery.run(visitId, d.productId, d.qty);
+    await decInv.run(d.qty, input.repId, d.productId);
   }
   return { id: visitId, duplicate: false };
 }

@@ -6,7 +6,7 @@ export async function GET(req: NextRequest) {
   const user = await getSessionUser();
   if (!user) return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   const q = req.nextUrl.searchParams.get("q") ?? undefined;
-  return NextResponse.json(listDoctors(q));
+  return NextResponse.json(await listDoctors(q));
 }
 
 export async function POST(req: NextRequest) {
@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
   if (!body?.name || !body?.facility_type) {
     return NextResponse.json({ error: "نام و نوع مرکز الزامی است." }, { status: 400 });
   }
-  const id = createDoctor({
+  const id = await createDoctor({
     name: body.name,
     specialty: body.specialty,
     facility_type: body.facility_type,

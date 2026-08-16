@@ -6,7 +6,7 @@ export default async function MyInventoryPage() {
   const user = await getSessionUser();
   if (!user) redirect("/login");
 
-  const inventory = listRepInventory(user.id) as {
+  const inventory = (await listRepInventory(user.id)) as {
     id: number;
     product_id: number;
     qty_on_hand: number;

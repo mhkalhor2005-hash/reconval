@@ -9,10 +9,10 @@ import AllocateStockForm from "@/components/AllocateStockForm";
 
 export default async function RepDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const rep = getRep(Number(id));
+  const rep = await getRep(Number(id));
   if (!rep || rep.role !== "REP") notFound();
 
-  const inventory = listRepInventory(Number(id)) as {
+  const inventory = (await listRepInventory(Number(id))) as {
     id: number;
     product_id: number;
     qty_on_hand: number;
@@ -20,8 +20,8 @@ export default async function RepDetailPage({ params }: { params: Promise<{ id: 
     type: string;
     unit_label: string;
   }[];
-  const products = listProducts();
-  const visits = listVisitsForRep(Number(id), 15) as {
+  const products = await listProducts();
+  const visits = (await listVisitsForRep(Number(id), 15)) as {
     id: number;
     doctor_name: string;
     checkin_at: string;

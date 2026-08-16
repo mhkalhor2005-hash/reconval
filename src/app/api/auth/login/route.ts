@@ -12,9 +12,9 @@ export async function POST(req: NextRequest) {
   }
 
   const db = getDb();
-  const user = db
+  const user = (await db
     .prepare(`SELECT id, name, username, password_hash, role FROM users WHERE username = ? AND active = 1`)
-    .get(username) as
+    .get(username)) as
     | { id: number; name: string; username: string; password_hash: string; role: Role }
     | undefined;
 

@@ -9,7 +9,7 @@ export async function PUT(req: NextRequest, ctx: { params: Promise<{ id: string 
   const body = await req.json().catch(() => null);
   if (!body) return NextResponse.json({ error: "بدنه درخواست نامعتبر است." }, { status: 400 });
   try {
-    const ok = updateRep(Number(id), {
+    const ok = await updateRep(Number(id), {
       name: body.name,
       username: body.username,
       password: body.password || undefined,

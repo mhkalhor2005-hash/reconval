@@ -6,7 +6,7 @@ export default async function MyVisitsPage() {
   const user = await getSessionUser();
   if (!user) redirect("/login");
 
-  const visits = listVisitsForRep(user.id, 100) as {
+  const visits = (await listVisitsForRep(user.id, 100)) as {
     id: number;
     doctor_name: string;
     checkin_at: string;

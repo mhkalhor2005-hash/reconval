@@ -12,9 +12,9 @@ const FACILITY_LABEL: Record<string, string> = {
 
 export default async function RepDoctorDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const doctor = getDoctor(Number(id));
+  const doctor = await getDoctor(Number(id));
   if (!doctor) notFound();
-  const history = doctorVisitHistory(Number(id)) as {
+  const history = (await doctorVisitHistory(Number(id))) as {
     id: number;
     checkin_at: string;
     outcome: Outcome | null;

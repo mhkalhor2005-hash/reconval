@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "نام، نام کاربری و رمز عبور الزامی است." }, { status: 400 });
   }
   try {
-    const id = createRep({
+    const id = await createRep({
       name: body.name,
       username: body.username,
       password: body.password,

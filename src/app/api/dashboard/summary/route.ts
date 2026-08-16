@@ -5,10 +5,11 @@ import { repPerformance, sampleConsumption, visitsForMap, overviewCounts } from 
 export async function GET() {
   const user = await getSessionUser();
   if (!user || user.role !== "MANAGER") return NextResponse.json({ error: "forbidden" }, { status: 403 });
-  return NextResponse.json({
-    overview: overviewCounts(),
-    reps: repPerformance(),
-    samples: sampleConsumption(30),
-    mapVisits: visitsForMap(14),
-  });
+  const [overview, reps, samples, mapVisits] = await Promise.all([
+    overviewCounts(),
+    repPerformance(),
+    sampleConsumption(30),
+    visitsForMap(14),
+  ]);
+  return NextResponse.json({ overview, reps, samples, mapVisits });
 }

@@ -7,7 +7,7 @@ export default async function RepHomePage() {
   const user = await getSessionUser();
   if (!user) redirect("/login");
 
-  const allReps = repPerformance() as {
+  const allReps = (await repPerformance()) as {
     id: number;
     visits_today: number;
     visits_this_month: number;

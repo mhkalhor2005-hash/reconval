@@ -4,7 +4,7 @@ import DoctorForm from "@/components/DoctorForm";
 
 export default async function EditDoctorPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const doctor = getDoctor(Number(id));
+  const doctor = await getDoctor(Number(id));
   if (!doctor) notFound();
   // node:sqlite rows aren't plain objects and can't cross the Server->Client
   // Component boundary as-is — remap to a plain literal first.

@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   const results: { clientUuid: string; id: number; duplicate: boolean }[] = [];
   for (const v of visits) {
     if (!v?.clientUuid || !v?.doctorId || !v?.checkinAt) continue;
-    const result = createOfflineVisit({
+    const result = await createOfflineVisit({
       doctorId: Number(v.doctorId),
       repId: user.id,
       checkinAt: v.checkinAt,

@@ -11,7 +11,7 @@ type RepRow = {
 };
 
 export default async function RepsPage() {
-  const reps = repPerformance() as RepRow[];
+  const reps = (await repPerformance()) as RepRow[];
 
   return (
     <div className="space-y-4">

@@ -1,6 +1,7 @@
 import { listProducts } from "@/lib/repo/products";
 import { inventorySummaryAllReps } from "@/lib/repo/inventory";
 import NewProductForm from "@/components/NewProductForm";
+import ProductRow from "@/components/ProductRow";
 
 export default async function ProductsPage() {
   const products = await listProducts();
@@ -33,15 +34,12 @@ export default async function ProductsPage() {
               <th className="px-4 py-2 text-right font-medium">نام</th>
               <th className="px-4 py-2 text-right font-medium">نوع</th>
               <th className="px-4 py-2 text-right font-medium">واحد</th>
+              <th className="px-4 py-2 text-right font-medium"></th>
             </tr>
           </thead>
           <tbody>
             {products.map((p) => (
-              <tr key={p.id} className="border-t border-neutral-100">
-                <td className="px-4 py-2.5 text-neutral-800">{p.name}</td>
-                <td className="px-4 py-2.5 text-neutral-500">{p.type === "SAMPLE" ? "نمونه دارویی" : "هدیه تبلیغاتی"}</td>
-                <td className="px-4 py-2.5 text-neutral-500">{p.unit_label}</td>
-              </tr>
+              <ProductRow key={p.id} product={p} />
             ))}
           </tbody>
         </table>

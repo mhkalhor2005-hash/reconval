@@ -6,6 +6,7 @@ import { listProducts } from "@/lib/repo/products";
 import { listVisitsForRep } from "@/lib/repo/visits";
 import { OUTCOME_LABELS, type Outcome } from "@/lib/repo/visits";
 import AllocateStockForm from "@/components/AllocateStockForm";
+import DeleteButton from "@/components/DeleteButton";
 
 export default async function RepDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -38,12 +39,20 @@ export default async function RepDetailPage({ params }: { params: Promise<{ id: 
             منطقه: {rep.region ?? "—"} · هدف ماهانه: {rep.monthly_target} ویزیت · نام کاربری: {rep.username}
           </p>
         </div>
-        <Link
-          href={`/dashboard/reps/${id}/edit`}
-          className="shrink-0 rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100"
-        >
-          ✏️ ویرایش
-        </Link>
+        <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href={`/dashboard/reps/${id}/edit`}
+            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100"
+          >
+            ✏️ ویرایش
+          </Link>
+          <DeleteButton
+            url={`/api/reps/${id}`}
+            confirmLabel="این ویزیتور غیرفعال شود؟"
+            redirectTo="/dashboard/reps"
+            label="🗑️ حذف ویزیتور"
+          />
+        </div>
       </div>
 
       <div className="card overflow-hidden">

@@ -19,13 +19,16 @@ export default async function DoctorsPage({
   return (
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-bold text-neutral-900">پزشکان و مراکز درمانی</h1>
-          <p className="text-sm text-neutral-500">{doctors.length} پزشک/مرکز ثبت‌شده</p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-light text-lg">🩺</div>
+          <div>
+            <h1 className="text-xl font-bold text-ink">پزشکان و مراکز درمانی</h1>
+            <p className="text-sm text-neutral-500">{doctors.length} پزشک/مرکز ثبت‌شده</p>
+          </div>
         </div>
         <Link
           href="/dashboard/doctors/new"
-          className="rounded-lg bg-brand px-4 py-2 text-sm font-semibold text-white hover:bg-brand-dark"
+          className="rounded-lg bg-brand-gradient px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-brand/25 transition hover:opacity-90"
         >
           + افزودن پزشک جدید
         </Link>
@@ -39,12 +42,12 @@ export default async function DoctorsPage({
           placeholder="جستجوی نام، تخصص یا آدرس..."
           className="w-full max-w-sm rounded-lg border border-neutral-300 px-3 py-2 text-sm outline-none focus:border-brand"
         />
-        <button className="rounded-lg border border-neutral-300 px-4 py-2 text-sm hover:bg-neutral-100">جستجو</button>
+        <button className="rounded-lg border border-neutral-300 px-4 py-2 text-sm hover:bg-brand-light/40">جستجو</button>
       </form>
 
       <div className="card overflow-x-auto">
         <table className="w-full min-w-[640px] text-sm">
-          <thead className="bg-neutral-50 text-neutral-500">
+          <thead className="bg-brand-light/40 text-neutral-500">
             <tr>
               <th className="px-4 py-2 text-right font-medium">نام</th>
               <th className="px-4 py-2 text-right font-medium">تخصص</th>
@@ -61,14 +64,18 @@ export default async function DoctorsPage({
               </tr>
             )}
             {doctors.map((d) => (
-              <tr key={d.id} className="border-t border-neutral-100 hover:bg-neutral-50">
+              <tr key={d.id} className="border-t border-brand-light/60 transition hover:bg-brand-light/20">
                 <td className="px-4 py-2.5">
                   <Link href={`/dashboard/doctors/${d.id}`} className="font-medium text-brand-dark hover:underline">
                     {d.name}
                   </Link>
                 </td>
                 <td className="px-4 py-2.5 text-neutral-600">{d.specialty ?? "—"}</td>
-                <td className="px-4 py-2.5 text-neutral-600">{FACILITY_LABEL[d.facility_type] ?? d.facility_type}</td>
+                <td className="px-4 py-2.5">
+                  <span className="rounded-full bg-brand-light px-2 py-0.5 text-xs font-medium text-brand-dark">
+                    {FACILITY_LABEL[d.facility_type] ?? d.facility_type}
+                  </span>
+                </td>
                 <td className="px-4 py-2.5 text-neutral-500">{d.address ?? "—"}</td>
               </tr>
             ))}

@@ -1,11 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getRep } from "@/lib/repo/users";
-import { listRepInventory } from "@/lib/repo/inventory";
-import { listProducts } from "@/lib/repo/products";
-import { listVisitsForRep } from "@/lib/repo/visits";
-import { OUTCOME_LABELS, type Outcome } from "@/lib/repo/visits";
-import AllocateStockForm from "@/components/AllocateStockForm";
+import { recentVisitsForRep, OUTCOME_LABELS, type Outcome } from "@/lib/repo/plans";
 import DeleteButton from "@/components/DeleteButton";
 
 export default async function RepDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -13,21 +9,13 @@ export default async function RepDetailPage({ params }: { params: Promise<{ id: 
   const rep = await getRep(Number(id));
   if (!rep || rep.role !== "REP") notFound();
 
-  const inventory = (await listRepInventory(Number(id))) as {
+  const visits = (await recentVisitsForRep(Number(id), 20)) as {
     id: number;
-    product_id: number;
-    qty_on_hand: number;
-    name: string;
-    type: string;
-    unit_label: string;
-  }[];
-  const products = await listProducts();
-  const visits = (await listVisitsForRep(Number(id), 15)) as {
-    id: number;
-    doctor_name: string;
-    checkin_at: string;
-    checkout_at: string | null;
+    done: number;
     outcome: Outcome | null;
+    note: string | null;
+    completed_at: string | null;
+    doctor_name: string;
   }[];
 
   return (
@@ -40,6 +28,12 @@ export default async function RepDetailPage({ params }: { params: Promise<{ id: 
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
+          <Link
+            href={`/dashboard/plans?rep=${id}`}
+            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100"
+          >
+            📅 برنامه هفتگی
+          </Link>
           <Link
             href={`/dashboard/reps/${id}/edit`}
             className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100"
@@ -57,44 +51,14 @@ export default async function RepDetailPage({ params }: { params: Promise<{ id: 
 
       <div className="card overflow-hidden">
         <div className="border-b border-neutral-100 p-4">
-          <h2 className="font-bold text-neutral-900">موجودی نمونه دارویی و هدایا</h2>
-        </div>
-        <table className="w-full text-sm">
-          <thead className="bg-neutral-50 text-neutral-500">
-            <tr>
-              <th className="px-4 py-2 text-right font-medium">محصول</th>
-              <th className="px-4 py-2 text-right font-medium">نوع</th>
-              <th className="px-4 py-2 text-right font-medium">موجودی فعلی</th>
-            </tr>
-          </thead>
-          <tbody>
-            {inventory.map((i) => (
-              <tr key={i.id} className="border-t border-neutral-100">
-                <td className="px-4 py-2.5 text-neutral-800">{i.name}</td>
-                <td className="px-4 py-2.5 text-neutral-500">{i.type === "SAMPLE" ? "نمونه" : "هدیه"}</td>
-                <td className={`px-4 py-2.5 font-semibold ${i.qty_on_hand < 10 ? "text-red-600" : "text-neutral-800"}`}>
-                  {i.qty_on_hand} {i.unit_label}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="border-t border-neutral-100 p-4">
-          <p className="mb-2 text-xs font-medium text-neutral-500">تخصیص موجودی جدید:</p>
-          <AllocateStockForm repId={Number(id)} products={products.map((p) => ({ id: p.id, name: p.name, unit_label: p.unit_label }))} />
-        </div>
-      </div>
-
-      <div className="card overflow-hidden">
-        <div className="border-b border-neutral-100 p-4">
           <h2 className="font-bold text-neutral-900">ویزیت‌های اخیر</h2>
         </div>
         <table className="w-full text-sm">
           <thead className="bg-neutral-50 text-neutral-500">
             <tr>
               <th className="px-4 py-2 text-right font-medium">پزشک</th>
+              <th className="px-4 py-2 text-right font-medium">وضعیت</th>
               <th className="px-4 py-2 text-right font-medium">تاریخ</th>
-              <th className="px-4 py-2 text-right font-medium">نتیجه</th>
             </tr>
           </thead>
           <tbody>
@@ -108,8 +72,12 @@ export default async function RepDetailPage({ params }: { params: Promise<{ id: 
             {visits.map((v) => (
               <tr key={v.id} className="border-t border-neutral-100">
                 <td className="px-4 py-2.5 text-neutral-800">{v.doctor_name}</td>
-                <td className="px-4 py-2.5 text-neutral-500">{new Date(v.checkin_at).toLocaleString("fa-IR")}</td>
-                <td className="px-4 py-2.5">{v.outcome ? OUTCOME_LABELS[v.outcome] : "در حال انجام"}</td>
+                <td className="px-4 py-2.5">
+                  {v.done ? (v.outcome ? OUTCOME_LABELS[v.outcome] : "—") : "برنامه‌ریزی‌شده"}
+                </td>
+                <td className="px-4 py-2.5 text-neutral-500">
+                  {v.completed_at ? new Date(v.completed_at).toLocaleString("fa-IR") : "—"}
+                </td>
               </tr>
             ))}
           </tbody>

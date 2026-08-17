@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listCompletedVisits, OUTCOME_LABELS, type Outcome } from "@/lib/repo/plans";
+import { formatJalaliDateTime } from "@/lib/date";
 import DeleteButton from "@/components/DeleteButton";
 
 const OUTCOME_BADGE: Record<Outcome, string> = {
@@ -58,7 +59,7 @@ export default async function AllVisitsPage() {
                 </td>
                 <td className="px-4 py-2.5 text-neutral-700">{v.rep_name}</td>
                 <td className="px-4 py-2.5 text-neutral-500">
-                  {v.completed_at ? new Date(v.completed_at).toLocaleString("fa-IR") : "—"}
+                  {v.completed_at ? formatJalaliDateTime(v.completed_at) : "—"}
                 </td>
                 <td className="px-4 py-2.5">
                   {v.outcome ? (

@@ -5,6 +5,7 @@ import SignOutButton from "@/components/SignOutButton";
 import Logo from "@/components/Logo";
 import RibbonIcon from "@/components/RibbonIcon";
 import DashboardNavLink from "@/components/DashboardNavLink";
+import ProductStrip from "@/components/ProductStrip";
 
 const navItems = [
   { href: "/dashboard", label: "نمای کلی", icon: "📊" },
@@ -32,6 +33,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <DashboardNavLink key={item.href} href={item.href} icon={item.icon} label={item.label} />
           ))}
         </nav>
+        <div className="relative z-10 mx-3 mb-3">
+          <ProductStrip dark />
+        </div>
+
         <div className="relative z-10 mx-3 mb-4 rounded-xl bg-white/5 p-3">
           <p className="mb-2 text-[11px] leading-5 text-white/50">پنل ویزیتور را هم می‌خواهید ببینید؟</p>
           <Link

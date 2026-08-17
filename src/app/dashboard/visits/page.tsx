@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listAllVisits, OUTCOME_LABELS, type Outcome } from "@/lib/repo/visits";
+import DeleteButton from "@/components/DeleteButton";
 
 export default async function AllVisitsPage() {
   const visits = (await listAllVisits({ limit: 200 })) as {
@@ -57,9 +58,12 @@ export default async function AllVisitsPage() {
                   <td className="px-4 py-2.5">{v.outcome ? OUTCOME_LABELS[v.outcome] : "—"}</td>
                   <td className="px-4 py-2.5 text-xs text-neutral-400">{v.offline_created ? "همگام‌سازی آفلاین" : "برخط"}</td>
                   <td className="px-4 py-2.5 text-left">
-                    <Link href={`/dashboard/visits/${v.id}/edit`} className="text-xs font-medium text-brand-dark hover:underline">
-                      ✏️ ویرایش
-                    </Link>
+                    <div className="flex items-center justify-end gap-2">
+                      <Link href={`/dashboard/visits/${v.id}/edit`} className="text-xs font-medium text-brand-dark hover:underline">
+                        ✏️ ویرایش
+                      </Link>
+                      <DeleteButton url={`/api/visits/${v.id}`} confirmLabel="این ویزیت حذف شود؟" label="🗑️" />
+                    </div>
                   </td>
                 </tr>
               );

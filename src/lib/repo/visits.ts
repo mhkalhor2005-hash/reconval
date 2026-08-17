@@ -137,6 +137,31 @@ export async function updateVisitByManager(visitId: number, input: { outcome?: O
   return true;
 }
 
+// Manager-only hard delete: undoes any sample deliveries by restoring the
+// rep's inventory, then removes the visit and its delivery rows entirely.
+export async function deleteVisit(visitId: number): Promise<{ ok: boolean; error?: string }> {
+  const db = getDb();
+  const visit = (await db.prepare(`SELECT id, rep_id FROM visits WHERE id = ?`).get(visitId)) as
+    | { id: number; rep_id: number }
+    | undefined;
+  if (!visit) return { ok: false, error: "ویزیت پیدا نشد." };
+
+  const deliveries = (await db
+    .prepare(`SELECT product_id, qty FROM sample_deliveries WHERE visit_id = ?`)
+    .all(visitId)) as { product_id: number; qty: number }[];
+
+  const incInv = db.prepare(
+    `UPDATE rep_inventory SET qty_on_hand = qty_on_hand + ? WHERE rep_id = ? AND product_id = ?`
+  );
+  for (const d of deliveries) {
+    await incInv.run(d.qty, visit.rep_id, d.product_id);
+  }
+
+  await db.prepare(`DELETE FROM sample_deliveries WHERE visit_id = ?`).run(visitId);
+  await db.prepare(`DELETE FROM visits WHERE id = ?`).run(visitId);
+  return { ok: true };
+}
+
 export async function getVisitDeliveries(visitId: number) {
   const db = getDb();
   return db

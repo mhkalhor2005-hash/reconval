@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth";
-import { endVisit, getVisit, getVisitDeliveries, updateVisitByManager } from "@/lib/repo/visits";
+import { endVisit, getVisit, getVisitDeliveries, updateVisitByManager, deleteVisit } from "@/lib/repo/visits";
 
 export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();
@@ -43,4 +43,14 @@ export async function PUT(req: NextRequest, ctx: { params: Promise<{ id: string 
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 400 });
   }
+}
+
+// Manager-only: permanently remove a visit (and restore any inventory it consumed).
+export async function DELETE(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
+  const user = await getSessionUser();
+  if (!user || user.role !== "MANAGER") return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  const { id } = await ctx.params;
+  const result = await deleteVisit(Number(id));
+  if (!result.ok) return NextResponse.json({ error: result.error }, { status: 404 });
+  return NextResponse.json({ ok: true });
 }

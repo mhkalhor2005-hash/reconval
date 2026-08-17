@@ -12,8 +12,14 @@ export default async function RepDoctorsPage({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-bold text-neutral-900">پزشکان</h1>
-        <Link href="/app/doctors/new" className="text-sm font-semibold text-brand-dark">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-light text-base">🩺</div>
+          <h1 className="text-lg font-bold text-ink">پزشکان</h1>
+        </div>
+        <Link
+          href="/app/doctors/new"
+          className="rounded-lg bg-brand-gradient px-3 py-1.5 text-sm font-semibold text-white shadow-lg shadow-brand/25 transition hover:opacity-90"
+        >
           + پزشک جدید
         </Link>
       </div>
@@ -32,9 +38,9 @@ export default async function RepDoctorsPage({
         {doctors.length === 0 && <li className="card p-4 text-center text-sm text-neutral-400">پزشکی یافت نشد.</li>}
         {doctors.map((d) => (
           <li key={d.id}>
-            <Link href={`/app/doctors/${d.id}`} className="card block p-4 transition active:bg-neutral-50">
+            <Link href={`/app/doctors/${d.id}`} className="card card-hover block p-4">
               <div className="flex items-center justify-between">
-                <span className="font-medium text-neutral-900">{d.name}</span>
+                <span className="font-medium text-ink">{d.name}</span>
                 <span className="text-xs text-neutral-400">{d.specialty}</span>
               </div>
               <p className="mt-1 text-xs text-neutral-500">📍 {d.address || "آدرس ثبت نشده"}</p>

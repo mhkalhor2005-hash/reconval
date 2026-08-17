@@ -18,7 +18,7 @@ export default async function EditRepPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="max-w-2xl space-y-4">
-      <h1 className="text-xl font-bold text-neutral-900">ویرایش ویزیتور</h1>
+      <h1 className="text-xl font-bold text-ink">ویرایش ویزیتور</h1>
       <RepForm initial={plainRep} />
     </div>
   );

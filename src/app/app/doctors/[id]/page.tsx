@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
-import { getDoctor, doctorVisitHistory } from "@/lib/repo/doctors";
-import { OUTCOME_LABELS, type Outcome } from "@/lib/repo/visits";
-import StartVisitButton from "@/components/StartVisitButton";
+import { getDoctor } from "@/lib/repo/doctors";
+import { doctorVisitHistory, OUTCOME_LABELS, type Outcome } from "@/lib/repo/plans";
 
 const FACILITY_LABEL: Record<string, string> = {
   CLINIC: "کلینیک",
@@ -16,8 +15,9 @@ export default async function RepDoctorDetailPage({ params }: { params: Promise<
   if (!doctor) notFound();
   const history = (await doctorVisitHistory(Number(id))) as {
     id: number;
-    checkin_at: string;
+    done: number;
     outcome: Outcome | null;
+    completed_at: string | null;
     rep_name: string;
   }[];
 
@@ -40,11 +40,12 @@ export default async function RepDoctorDetailPage({ params }: { params: Promise<
               ☎ {doctor.phone}
             </p>
           )}
-          {doctor.notes && <p className="text-neutral-500">📝 {doctor.notes}</p>}
+          {doctor.notes && <p className="whitespace-pre-line text-neutral-500">📝 {doctor.notes}</p>}
         </div>
+        <p className="mt-3 text-xs text-neutral-400">
+          برای ثبت ویزیت این پزشک، باید توسط مدیر در «برنامه هفتگی» به شما تخصیص داده شده باشد.
+        </p>
       </div>
-
-      <StartVisitButton doctorId={doctor.id} doctorName={doctor.name} />
 
       <div className="card overflow-hidden">
         <div className="border-b border-neutral-100 p-3">
@@ -54,9 +55,13 @@ export default async function RepDoctorDetailPage({ params }: { params: Promise<
           {history.length === 0 && <li className="p-4 text-center text-sm text-neutral-400">هنوز ویزیتی ثبت نشده.</li>}
           {history.map((h) => (
             <li key={h.id} className="flex items-center justify-between p-3 text-sm">
-              <span className="text-neutral-500">{new Date(h.checkin_at).toLocaleDateString("fa-IR")}</span>
+              <span className="text-neutral-500">
+                {h.completed_at ? new Date(h.completed_at).toLocaleDateString("fa-IR") : "—"}
+              </span>
               <span className="text-neutral-500">{h.rep_name}</span>
-              <span className="font-medium text-neutral-800">{h.outcome ? OUTCOME_LABELS[h.outcome] : "در حال انجام"}</span>
+              <span className="font-medium text-neutral-800">
+                {h.done ? (h.outcome ? OUTCOME_LABELS[h.outcome] : "—") : "برنامه‌ریزی‌شده"}
+              </span>
             </li>
           ))}
         </ul>

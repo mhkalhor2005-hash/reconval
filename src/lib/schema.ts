@@ -29,45 +29,55 @@ CREATE TABLE IF NOT EXISTS doctors (
   created_at TEXT NOT NULL DEFAULT (now()::text)
 );
 
-CREATE TABLE IF NOT EXISTS products (
-  id SERIAL PRIMARY KEY,
-  name TEXT NOT NULL,
-  type TEXT NOT NULL CHECK(type IN ('SAMPLE','GIFT')),
-  unit_label TEXT NOT NULL DEFAULT 'عدد',
-  active INTEGER NOT NULL DEFAULT 1
-);
-
-CREATE TABLE IF NOT EXISTS rep_inventory (
+-- Weekly visit planning: the manager assigns doctors to a rep for a given
+-- week (Saturday-start). This IS the visit system now — there is no
+-- separate GPS check-in/check-out flow. A "visit" only exists as a row in
+-- plan_visits, created when the manager adds a doctor to a rep's weekly plan.
+CREATE TABLE IF NOT EXISTS weekly_plans (
   id SERIAL PRIMARY KEY,
   rep_id INTEGER NOT NULL REFERENCES users(id),
-  product_id INTEGER NOT NULL REFERENCES products(id),
-  qty_on_hand INTEGER NOT NULL DEFAULT 0,
-  UNIQUE(rep_id, product_id)
+  week_start TEXT NOT NULL,
+  created_at TEXT NOT NULL DEFAULT (now()::text),
+  UNIQUE(rep_id, week_start)
 );
 
-CREATE TABLE IF NOT EXISTS visits (
+CREATE TABLE IF NOT EXISTS plan_visits (
   id SERIAL PRIMARY KEY,
+  plan_id INTEGER NOT NULL REFERENCES weekly_plans(id),
   doctor_id INTEGER NOT NULL REFERENCES doctors(id),
   rep_id INTEGER NOT NULL REFERENCES users(id),
-  checkin_at TEXT NOT NULL,
-  checkout_at TEXT,
-  checkin_lat REAL,
-  checkin_lng REAL,
+  done INTEGER NOT NULL DEFAULT 0,
   outcome TEXT,
   note TEXT,
-  client_uuid TEXT UNIQUE,
-  offline_created INTEGER NOT NULL DEFAULT 0,
+  completed_at TEXT,
   created_at TEXT NOT NULL DEFAULT (now()::text)
 );
 
-CREATE TABLE IF NOT EXISTS sample_deliveries (
+-- Pharmacies: a section fully separate from doctors. Each pharmacy can have
+-- many orders logged over time (by whichever rep placed/recorded the
+-- order); "last order" is simply the most recent row per pharmacy.
+CREATE TABLE IF NOT EXISTS pharmacies (
   id SERIAL PRIMARY KEY,
-  visit_id INTEGER NOT NULL REFERENCES visits(id),
-  product_id INTEGER NOT NULL REFERENCES products(id),
-  qty INTEGER NOT NULL
+  name TEXT NOT NULL,
+  address TEXT,
+  phone TEXT,
+  notes TEXT,
+  created_at TEXT NOT NULL DEFAULT (now()::text)
 );
 
-CREATE INDEX IF NOT EXISTS idx_visits_rep ON visits(rep_id);
-CREATE INDEX IF NOT EXISTS idx_visits_doctor ON visits(doctor_id);
-CREATE INDEX IF NOT EXISTS idx_deliveries_visit ON sample_deliveries(visit_id);
+CREATE TABLE IF NOT EXISTS pharmacy_orders (
+  id SERIAL PRIMARY KEY,
+  pharmacy_id INTEGER NOT NULL REFERENCES pharmacies(id),
+  rep_id INTEGER NOT NULL REFERENCES users(id),
+  order_date TEXT NOT NULL,
+  quantity INTEGER NOT NULL,
+  note TEXT,
+  created_at TEXT NOT NULL DEFAULT (now()::text)
+);
+
+CREATE INDEX IF NOT EXISTS idx_plan_visits_plan ON plan_visits(plan_id);
+CREATE INDEX IF NOT EXISTS idx_plan_visits_rep ON plan_visits(rep_id);
+CREATE INDEX IF NOT EXISTS idx_plan_visits_doctor ON plan_visits(doctor_id);
+CREATE INDEX IF NOT EXISTS idx_pharmacy_orders_pharmacy ON pharmacy_orders(pharmacy_id);
+CREATE INDEX IF NOT EXISTS idx_pharmacy_orders_rep ON pharmacy_orders(rep_id);
 `;

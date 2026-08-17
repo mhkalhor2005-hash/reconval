@@ -2,6 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import SignOutButton from "@/components/SignOutButton";
+import Logo from "@/components/Logo";
+import RibbonIcon from "@/components/RibbonIcon";
+import DashboardNavLink from "@/components/DashboardNavLink";
 
 const navItems = [
   { href: "/dashboard", label: "نمای کلی", icon: "📊" },
@@ -19,55 +22,50 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   return (
     <div className="flex min-h-screen flex-1">
-      <aside className="hidden w-60 shrink-0 flex-col border-l border-neutral-200 bg-white p-4 sm:flex">
-        <div className="mb-8 flex items-center gap-2 px-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand text-sm font-bold text-white">
-            ر
-          </div>
-          <span className="font-bold text-brand-dark">پنل مدیریت ریکنوال</span>
+      <aside className="relative hidden w-64 shrink-0 flex-col overflow-hidden border-l border-black/5 bg-ink sm:flex">
+        <div className="ribbon-watermark opacity-60" />
+        <div className="relative z-10 mb-6 px-5 pt-6">
+          <Logo size="sm" dark />
         </div>
-        <nav className="flex flex-1 flex-col gap-1">
+        <nav className="relative z-10 flex flex-1 flex-col gap-1 px-3">
           {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-neutral-700 transition hover:bg-brand-light hover:text-brand-dark"
-            >
-              <span>{item.icon}</span>
-              <span>{item.label}</span>
-            </Link>
+            <DashboardNavLink key={item.href} href={item.href} icon={item.icon} label={item.label} />
           ))}
         </nav>
-        <Link href="/app" className="mb-2 rounded-lg px-3 py-2 text-xs text-neutral-400 hover:text-neutral-600">
-          مشاهده نمای ویزیتور ↗
-        </Link>
+        <div className="relative z-10 mx-3 mb-4 rounded-xl bg-white/5 p-3">
+          <p className="mb-2 text-[11px] leading-5 text-white/50">پنل ویزیتور را هم می‌خواهید ببینید؟</p>
+          <Link
+            href="/app"
+            className="flex items-center gap-1.5 rounded-lg bg-white/10 px-3 py-2 text-xs font-medium text-white/90 transition hover:bg-white/20"
+          >
+            مشاهده نمای ویزیتور ↗
+          </Link>
+        </div>
       </aside>
 
       <div className="flex flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-neutral-200 bg-white px-4 py-3 sm:px-6">
+        <header className="flex items-center justify-between border-b border-brand-light/70 bg-white/90 px-4 py-3 backdrop-blur sm:px-6">
           <div className="flex items-center gap-2 sm:hidden">
-            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-brand text-xs font-bold text-white">
-              ر
-            </div>
-            <span className="text-sm font-bold text-brand-dark">ریکنوال</span>
+            <RibbonIcon className="h-6 w-5" />
+            <span className="font-display text-lg font-semibold text-ink">Reconval</span>
           </div>
           <div className="hidden text-sm text-neutral-500 sm:block">
-            خوش آمدید، <span className="font-semibold text-neutral-800">{user.name}</span>
+            خوش آمدید، <span className="font-semibold text-ink">{user.name}</span>
           </div>
           <SignOutButton />
         </header>
-        <nav className="flex gap-1 overflow-x-auto border-b border-neutral-200 bg-white px-2 py-2 sm:hidden">
+        <nav className="flex gap-1 overflow-x-auto border-b border-brand-light/70 bg-white px-2 py-2 sm:hidden">
           {navItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className="whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium text-neutral-600 hover:bg-brand-light"
+              className="whitespace-nowrap rounded-lg px-3 py-1.5 text-xs font-medium text-neutral-600 hover:bg-brand-light hover:text-brand-dark"
             >
               {item.icon} {item.label}
             </Link>
           ))}
         </nav>
-        <main className="flex-1 bg-neutral-50 p-4 sm:p-6">{children}</main>
+        <main className="flex-1 bg-background p-4 sm:p-6">{children}</main>
       </div>
     </div>
   );

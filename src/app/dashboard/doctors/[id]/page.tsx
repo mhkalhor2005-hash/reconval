@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getDoctor, doctorVisitHistory } from "@/lib/repo/doctors";
-import { OUTCOME_LABELS, type Outcome } from "@/lib/repo/visits";
+import { getDoctor } from "@/lib/repo/doctors";
+import { doctorVisitHistory, OUTCOME_LABELS, type Outcome } from "@/lib/repo/plans";
 import DeleteButton from "@/components/DeleteButton";
 
 const FACILITY_LABEL: Record<string, string> = {
@@ -17,10 +17,11 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
   if (!doctor) notFound();
   const history = (await doctorVisitHistory(Number(id))) as {
     id: number;
-    checkin_at: string;
-    checkout_at: string | null;
+    done: number;
     outcome: Outcome | null;
     note: string | null;
+    completed_at: string | null;
+    created_at: string;
     rep_name: string;
   }[];
 
@@ -60,29 +61,23 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
               {doctor.phone || "—"}
             </dd>
           </div>
-          <div>
-            <dt className="text-neutral-400">موقعیت مکانی</dt>
-            <dd className="text-neutral-800">
-              {doctor.lat && doctor.lng ? `${doctor.lat.toFixed(5)}, ${doctor.lng.toFixed(5)}` : "ثبت نشده"}
-            </dd>
-          </div>
-          <div>
-            <dt className="text-neutral-400">یادداشت</dt>
-            <dd className="text-neutral-800">{doctor.notes || "—"}</dd>
+          <div className="sm:col-span-2">
+            <dt className="text-neutral-400">یادداشت (شامل خلاصه نتیجه ویزیت‌ها)</dt>
+            <dd className="whitespace-pre-line text-neutral-800">{doctor.notes || "—"}</dd>
           </div>
         </dl>
       </div>
 
       <div className="card overflow-hidden">
         <div className="border-b border-neutral-100 p-4">
-          <h2 className="font-bold text-neutral-900">تاریخچه تعاملات ({history.length})</h2>
+          <h2 className="font-bold text-neutral-900">تاریخچه ویزیت‌های برنامه‌ریزی‌شده ({history.length})</h2>
         </div>
         <table className="w-full text-sm">
           <thead className="bg-neutral-50 text-neutral-500">
             <tr>
-              <th className="px-4 py-2 text-right font-medium">تاریخ</th>
               <th className="px-4 py-2 text-right font-medium">ویزیتور</th>
-              <th className="px-4 py-2 text-right font-medium">نتیجه</th>
+              <th className="px-4 py-2 text-right font-medium">وضعیت</th>
+              <th className="px-4 py-2 text-right font-medium">تاریخ انجام</th>
               <th className="px-4 py-2 text-right font-medium">یادداشت</th>
               <th className="px-4 py-2 text-right font-medium"></th>
             </tr>
@@ -91,22 +86,28 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
             {history.length === 0 && (
               <tr>
                 <td colSpan={5} className="px-4 py-8 text-center text-neutral-400">
-                  هنوز ویزیتی ثبت نشده است.
+                  هنوز ویزیتی برای این پزشک برنامه‌ریزی نشده است.
                 </td>
               </tr>
             )}
             {history.map((h) => (
               <tr key={h.id} className="border-t border-neutral-100">
-                <td className="px-4 py-2.5 text-neutral-600">{new Date(h.checkin_at).toLocaleString("fa-IR")}</td>
                 <td className="px-4 py-2.5 text-neutral-800">{h.rep_name}</td>
-                <td className="px-4 py-2.5">{h.outcome ? OUTCOME_LABELS[h.outcome] : "در حال انجام"}</td>
+                <td className="px-4 py-2.5">
+                  {h.done ? (h.outcome ? OUTCOME_LABELS[h.outcome] : "—") : "برنامه‌ریزی‌شده (هنوز انجام نشده)"}
+                </td>
+                <td className="px-4 py-2.5 text-neutral-600">
+                  {h.completed_at ? new Date(h.completed_at).toLocaleString("fa-IR") : "—"}
+                </td>
                 <td className="px-4 py-2.5 text-neutral-500">{h.note || "—"}</td>
                 <td className="px-4 py-2.5 text-left">
                   <div className="flex items-center justify-end gap-2">
-                    <Link href={`/dashboard/visits/${h.id}/edit`} className="text-xs font-medium text-brand-dark hover:underline">
-                      ✏️ ویرایش
-                    </Link>
-                    <DeleteButton url={`/api/visits/${h.id}`} confirmLabel="این ویزیت حذف شود؟" label="🗑️" />
+                    {h.done && (
+                      <Link href={`/dashboard/visits/${h.id}/edit`} className="text-xs font-medium text-brand-dark hover:underline">
+                        ✏️ ویرایش
+                      </Link>
+                    )}
+                    <DeleteButton url={`/api/plan-visits/${h.id}`} confirmLabel="این مورد حذف شود؟" label="🗑️" />
                   </div>
                 </td>
               </tr>

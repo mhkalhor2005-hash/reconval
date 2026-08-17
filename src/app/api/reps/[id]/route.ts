@@ -22,3 +22,15 @@ export async function PUT(req: NextRequest, ctx: { params: Promise<{ id: string 
     return NextResponse.json({ error: (e as Error).message }, { status: 400 });
   }
 }
+
+// Manager-only: soft-delete (deactivate) a rep. Visit/inventory history for
+// this rep stays intact — they just stop showing up in active lists and
+// can no longer log in.
+export async function DELETE(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
+  const user = await getSessionUser();
+  if (!user || user.role !== "MANAGER") return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+  const { id } = await ctx.params;
+  const ok = await updateRep(Number(id), { active: false });
+  if (!ok) return NextResponse.json({ error: "not found" }, { status: 404 });
+  return NextResponse.json({ ok: true });
+}

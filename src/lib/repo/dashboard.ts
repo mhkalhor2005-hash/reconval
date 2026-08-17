@@ -28,7 +28,7 @@ export async function repPerformance() {
          COUNT(CASE WHEN v.checkin_at >= ? THEN 1 END) as visits_today
        FROM users u
        LEFT JOIN visits v ON v.rep_id = u.id
-       WHERE u.role = 'REP'
+       WHERE u.role = 'REP' AND u.active = 1
        GROUP BY u.id
        ORDER BY u.name`
     )

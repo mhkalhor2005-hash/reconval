@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth";
-import { getDoctor, updateDoctor, deleteDoctor, doctorVisitHistory } from "@/lib/repo/doctors";
+import { getDoctor, updateDoctor, deleteDoctor } from "@/lib/repo/doctors";
+import { doctorVisitHistory } from "@/lib/repo/plans";
 
 export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();

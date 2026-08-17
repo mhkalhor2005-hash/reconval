@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { listPharmacies } from "@/lib/repo/pharmacies";
+import { formatJalaliDate } from "@/lib/date";
 import PharmacyForm from "@/components/PharmacyForm";
 
 function orderRecencyClass(dateStr: string) {
@@ -69,7 +70,7 @@ export default async function PharmaciesPage() {
                     <span
                       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${orderRecencyClass(p.last_order_date)}`}
                     >
-                      📦 {new Date(p.last_order_date).toLocaleDateString("fa-IR")}
+                      📦 {formatJalaliDate(p.last_order_date)}
                     </span>
                   ) : (
                     <span className="text-neutral-400">—</span>

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getDoctor } from "@/lib/repo/doctors";
 import { doctorVisitHistory, OUTCOME_LABELS, type Outcome } from "@/lib/repo/plans";
+import { formatJalaliDate } from "@/lib/date";
 
 const FACILITY_LABEL: Record<string, string> = {
   CLINIC: "کلینیک",
@@ -59,7 +60,7 @@ export default async function RepDoctorDetailPage({ params }: { params: Promise<
           {history.map((h) => (
             <li key={h.id} className="flex items-center justify-between p-3 text-sm transition hover:bg-brand-light/20">
               <span className="text-neutral-500">
-                {h.completed_at ? new Date(h.completed_at).toLocaleDateString("fa-IR") : "—"}
+                {h.completed_at ? formatJalaliDate(h.completed_at) : "—"}
               </span>
               <span className="text-neutral-500">{h.rep_name}</span>
               <span className="font-medium text-ink">

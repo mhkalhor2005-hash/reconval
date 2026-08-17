@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { getPharmacy, listPharmacyOrders } from "@/lib/repo/pharmacies";
+import { formatJalaliDate } from "@/lib/date";
 import OrderForm from "@/components/OrderForm";
 
 export default async function RepPharmacyDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -53,7 +54,7 @@ export default async function RepPharmacyDetailPage({ params }: { params: Promis
           {orders.map((o) => (
             <li key={o.id} className="p-3 text-sm transition hover:bg-brand-light/20">
               <div className="flex items-center justify-between">
-                <span className="font-medium text-ink">{new Date(o.order_date).toLocaleDateString("fa-IR")}</span>
+                <span className="font-medium text-ink">{formatJalaliDate(o.order_date)}</span>
                 <span className="text-neutral-600">{o.quantity} عدد</span>
               </div>
               <p className="text-xs text-neutral-400">{o.rep_name}{o.note ? ` · ${o.note}` : ""}</p>

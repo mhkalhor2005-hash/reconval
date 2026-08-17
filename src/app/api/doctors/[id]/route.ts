@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionUser } from "@/lib/auth";
-import { getDoctor, updateDoctor, doctorVisitHistory } from "@/lib/repo/doctors";
+import { getDoctor, updateDoctor, deleteDoctor, doctorVisitHistory } from "@/lib/repo/doctors";
 
 export async function GET(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
   const user = await getSessionUser();
@@ -20,5 +20,14 @@ export async function PUT(req: NextRequest, ctx: { params: Promise<{ id: string 
   if (!body) return NextResponse.json({ error: "بدنه درخواست نامعتبر است." }, { status: 400 });
   const ok = await updateDoctor(Number(id), body);
   if (!ok) return NextResponse.json({ error: "not found" }, { status: 404 });
+  return NextResponse.json({ ok: true });
+}
+
+export async function DELETE(_req: NextRequest, ctx: { params: Promise<{ id: string }> }) {
+  const user = await getSessionUser();
+  if (!user || user.role !== "MANAGER") return NextResponse.json({ error: "forbidden" }, { status: 403 });
+  const { id } = await ctx.params;
+  const result = await deleteDoctor(Number(id));
+  if (!result.ok) return NextResponse.json({ error: result.error }, { status: 409 });
   return NextResponse.json({ ok: true });
 }

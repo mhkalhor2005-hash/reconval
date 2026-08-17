@@ -22,21 +22,24 @@ export default async function RepDetailPage({ params }: { params: Promise<{ id: 
     <div className="max-w-4xl space-y-6">
       <div className="card flex items-start justify-between gap-3 p-5">
         <div>
-          <h1 className="text-xl font-bold text-neutral-900">{rep.name}</h1>
-          <p className="text-sm text-neutral-500">
+          <div className="flex items-center gap-2">
+            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-light text-lg">🧑‍💼</div>
+            <h1 className="text-xl font-bold text-ink">{rep.name}</h1>
+          </div>
+          <p className="mt-2 text-sm text-neutral-500">
             منطقه: {rep.region ?? "—"} · هدف ماهانه: {rep.monthly_target} ویزیت · نام کاربری: {rep.username}
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-2">
           <Link
             href={`/dashboard/plans?rep=${id}`}
-            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100"
+            className="rounded-lg border border-brand-light px-3 py-1.5 text-xs font-medium text-ink hover:bg-brand-light/40"
           >
             📅 برنامه هفتگی
           </Link>
           <Link
             href={`/dashboard/reps/${id}/edit`}
-            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100"
+            className="rounded-lg border border-brand-light px-3 py-1.5 text-xs font-medium text-ink hover:bg-brand-light/40"
           >
             ✏️ ویرایش
           </Link>
@@ -50,11 +53,11 @@ export default async function RepDetailPage({ params }: { params: Promise<{ id: 
       </div>
 
       <div className="card overflow-hidden">
-        <div className="border-b border-neutral-100 p-4">
-          <h2 className="font-bold text-neutral-900">ویزیت‌های اخیر</h2>
+        <div className="border-b border-brand-light/70 p-4">
+          <h2 className="font-bold text-ink">ویزیت‌های اخیر</h2>
         </div>
         <table className="w-full text-sm">
-          <thead className="bg-neutral-50 text-neutral-500">
+          <thead className="bg-brand-light/40 text-neutral-500">
             <tr>
               <th className="px-4 py-2 text-right font-medium">پزشک</th>
               <th className="px-4 py-2 text-right font-medium">وضعیت</th>
@@ -70,10 +73,16 @@ export default async function RepDetailPage({ params }: { params: Promise<{ id: 
               </tr>
             )}
             {visits.map((v) => (
-              <tr key={v.id} className="border-t border-neutral-100">
+              <tr key={v.id} className="border-t border-brand-light/60 transition hover:bg-brand-light/20">
                 <td className="px-4 py-2.5 text-neutral-800">{v.doctor_name}</td>
                 <td className="px-4 py-2.5">
-                  {v.done ? (v.outcome ? OUTCOME_LABELS[v.outcome] : "—") : "برنامه‌ریزی‌شده"}
+                  {v.done ? (
+                    <span className="rounded-full bg-brand-light px-2 py-0.5 text-xs font-medium text-brand-dark">
+                      {v.outcome ? OUTCOME_LABELS[v.outcome] : "—"}
+                    </span>
+                  ) : (
+                    <span className="text-neutral-500">برنامه‌ریزی‌شده</span>
+                  )}
                 </td>
                 <td className="px-4 py-2.5 text-neutral-500">
                   {v.completed_at ? new Date(v.completed_at).toLocaleString("fa-IR") : "—"}

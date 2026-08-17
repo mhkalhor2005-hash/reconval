@@ -2,10 +2,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { getPlanForRep, weekStartISO, shiftWeek, weekEndISO } from "@/lib/repo/plans";
+import { formatJalaliDate } from "@/lib/date";
 import PlanVisitItem from "@/components/PlanVisitItem";
 
 function formatFa(iso: string) {
-  return new Date(iso + "T00:00:00Z").toLocaleDateString("fa-IR");
+  return formatJalaliDate(iso + "T00:00:00Z");
 }
 
 export default async function MyPlanPage({ searchParams }: { searchParams: Promise<{ week?: string }> }) {

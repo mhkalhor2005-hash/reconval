@@ -37,7 +37,7 @@ export async function inventorySummaryAllReps() {
        FROM rep_inventory ri
        JOIN users u ON u.id = ri.rep_id
        JOIN products p ON p.id = ri.product_id
-       WHERE p.active = 1
+       WHERE p.active = 1 AND u.active = 1
        ORDER BY u.name, p.type, p.name`
     )
     .all();

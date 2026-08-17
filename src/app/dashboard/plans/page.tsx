@@ -1,10 +1,11 @@
 import Link from "next/link";
 import { planStatusForWeek, weekStartISO, shiftWeek, weekEndISO } from "@/lib/repo/plans";
+import { formatJalaliDate } from "@/lib/date";
 import { listDoctors } from "@/lib/repo/doctors";
 import PlanEditor from "@/components/PlanEditor";
 
 function formatFa(iso: string) {
-  return new Date(iso + "T00:00:00Z").toLocaleDateString("fa-IR");
+  return formatJalaliDate(iso + "T00:00:00Z");
 }
 
 export default async function PlansPage({

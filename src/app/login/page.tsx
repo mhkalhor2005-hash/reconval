@@ -2,6 +2,7 @@
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Logo from "@/components/Logo";
 
 function LoginForm() {
   const router = useRouter();
@@ -37,19 +38,13 @@ function LoginForm() {
     }
   }
 
-  function fill(u: string, p: string) {
-    setUsername(u);
-    setPassword(p);
-  }
-
   return (
-    <div className="flex flex-1 items-center justify-center px-4 py-12">
-      <div className="w-full max-w-sm">
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-brand text-xl font-bold text-white">
-            ر
-          </div>
-          <h1 className="text-xl font-bold text-neutral-900">ورود به پنل ریکنوال</h1>
+    <div className="relative flex flex-1 items-center justify-center overflow-hidden px-4 py-12">
+      <div className="ribbon-watermark" />
+      <div className="relative z-10 w-full max-w-sm">
+        <div className="mb-8 flex flex-col items-center text-center">
+          <Logo size="lg" withSubtitle className="mb-5" />
+          <h1 className="text-xl font-bold text-ink">ورود به پنل ریکنوال</h1>
           <p className="mt-1 text-sm text-neutral-500">با نام کاربری و رمز عبور خود وارد شوید</p>
         </div>
 
@@ -58,7 +53,7 @@ function LoginForm() {
             <label className="mb-1 block text-sm font-medium text-neutral-700">نام کاربری</label>
             <input
               name="username"
-              className="w-full rounded-lg border border-neutral-300 px-3 py-2 outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+              className="w-full rounded-lg border border-neutral-300 px-3 py-2 outline-none transition focus:border-brand"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               autoFocus
@@ -70,7 +65,7 @@ function LoginForm() {
             <input
               type="password"
               name="password"
-              className="w-full rounded-lg border border-neutral-300 px-3 py-2 outline-none focus:border-brand focus:ring-1 focus:ring-brand"
+              className="w-full rounded-lg border border-neutral-300 px-3 py-2 outline-none transition focus:border-brand"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -80,31 +75,11 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full rounded-lg bg-brand py-2.5 font-semibold text-white transition hover:bg-brand-dark disabled:opacity-60"
+            className="w-full rounded-lg bg-brand-gradient py-2.5 font-semibold text-white shadow-lg shadow-brand/25 transition hover:opacity-90 disabled:opacity-60"
           >
             {loading ? "در حال ورود..." : "ورود"}
           </button>
         </form>
-
-        <div className="card mt-4 p-4 text-xs leading-6 text-neutral-500">
-          <p className="mb-2 font-semibold text-neutral-700">حساب‌های نمایشی:</p>
-          <div className="flex flex-wrap gap-2">
-            <button
-              type="button"
-              onClick={() => fill("manager", "manager123")}
-              className="rounded-md border border-neutral-300 px-2 py-1 hover:bg-neutral-100"
-            >
-              مدیر فروش: manager / manager123
-            </button>
-            <button
-              type="button"
-              onClick={() => fill("rep1", "rep123")}
-              className="rounded-md border border-neutral-300 px-2 py-1 hover:bg-neutral-100"
-            >
-              ویزیتور: rep1 / rep123
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

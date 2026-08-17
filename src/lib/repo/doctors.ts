@@ -95,6 +95,21 @@ export async function updateDoctor(
   return true;
 }
 
+export async function deleteDoctor(id: number): Promise<{ ok: boolean; error?: string }> {
+  const db = getDb();
+  const visitCount = (await db.prepare(`SELECT COUNT(*) as c FROM visits WHERE doctor_id = ?`).get(id)) as
+    | { c: number | string }
+    | undefined;
+  if (visitCount && Number(visitCount.c) > 0) {
+    return {
+      ok: false,
+      error: "این پزشک دارای تاریخچه ویزیت است و قابل حذف نیست. ابتدا ویزیت‌های مربوط به این پزشک را حذف کنید.",
+    };
+  }
+  await db.prepare(`DELETE FROM doctors WHERE id = ?`).run(id);
+  return { ok: true };
+}
+
 export async function doctorVisitHistory(id: number) {
   const db = getDb();
   return db

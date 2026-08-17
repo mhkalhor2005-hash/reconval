@@ -22,7 +22,9 @@ export async function createProduct(input: { name: string; type: "SAMPLE" | "GIF
     .run(input.name, input.type, input.unit_label ?? "عدد");
   const id = Number(res.lastInsertRowid);
   // Give every existing rep a zero-stock row so allocation UI is consistent.
-  const reps = (await db.prepare(`SELECT id FROM users WHERE role = 'REP'`).all()) as { id: number }[];
+  const reps = (await db.prepare(`SELECT id FROM users WHERE role = 'REP' AND active = 1`).all()) as {
+    id: number;
+  }[];
   const ins = db.prepare(
     `INSERT INTO rep_inventory (rep_id, product_id, qty_on_hand) VALUES (?, ?, 0) ON CONFLICT (rep_id, product_id) DO NOTHING`
   );

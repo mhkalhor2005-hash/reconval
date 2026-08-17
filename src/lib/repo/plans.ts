@@ -1,4 +1,5 @@
 import { getDb } from "@/lib/db";
+import { formatJalaliDate } from "@/lib/date";
 
 // The weekly plan IS the visit system: a "visit" only exists as a row in
 // plan_visits, created when the manager assigns a doctor to a rep for a
@@ -129,7 +130,7 @@ export async function completePlanVisit(id: number, input: { outcome: Outcome; n
     .prepare(`UPDATE plan_visits SET done = 1, outcome = ?, note = ?, completed_at = ? WHERE id = ?`)
     .run(input.outcome, input.note ?? "", now, id);
 
-  const dateLabel = new Date(now).toLocaleDateString("fa-IR");
+  const dateLabel = formatJalaliDate(now);
   const rep = (await db.prepare(`SELECT name FROM users WHERE id = ?`).get(item.rep_id)) as
     | { name: string }
     | undefined;

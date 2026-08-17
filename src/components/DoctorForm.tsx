@@ -156,16 +156,16 @@ export default function DoctorForm({
         </div>
       </div>
 
-      <div className="rounded-lg border border-dashed border-neutral-300 p-3">
+      <div className="rounded-lg border border-dashed border-brand-light bg-brand-light/20 p-3">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <p className="text-xs text-neutral-500">
-            موقعیت مکانی: {form.lat && form.lng ? `${Number(form.lat).toFixed(5)}, ${Number(form.lng).toFixed(5)}` : "ثبت نشده"}
+            📍 موقعیت مکانی: {form.lat && form.lng ? `${Number(form.lat).toFixed(5)}, ${Number(form.lng).toFixed(5)}` : "ثبت نشده"}
           </p>
           <button
             type="button"
             onClick={useCurrentLocation}
             disabled={locating}
-            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100 disabled:opacity-50"
+            className="rounded-lg border border-neutral-300 bg-white px-3 py-1.5 text-xs font-medium hover:bg-brand-light/40 disabled:opacity-50"
           >
             {locating ? "در حال دریافت موقعیت..." : "📍 استفاده از موقعیت فعلی"}
           </button>
@@ -177,7 +177,7 @@ export default function DoctorForm({
       <button
         type="submit"
         disabled={saving}
-        className="w-full rounded-lg bg-brand py-2.5 font-semibold text-white hover:bg-brand-dark disabled:opacity-60 sm:w-auto sm:px-8"
+        className="w-full rounded-lg bg-brand-gradient py-2.5 font-semibold text-white shadow-lg shadow-brand/25 transition hover:opacity-90 disabled:opacity-60 sm:w-auto sm:px-8"
       >
         {saving ? "در حال ذخیره..." : editing ? "ذخیره تغییرات" : "ذخیره پزشک"}
       </button>

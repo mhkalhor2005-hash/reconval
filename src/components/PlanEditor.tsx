@@ -10,6 +10,13 @@ const OUTCOME_LABELS: Record<string, string> = {
   NEGATIVE: "منفی",
 };
 
+const OUTCOME_BADGE: Record<string, string> = {
+  POSITIVE: "bg-green-50 text-green-700",
+  NEUTRAL: "bg-neutral-100 text-neutral-600",
+  FOLLOW_UP: "bg-amber-50 text-amber-700",
+  NEGATIVE: "bg-red-50 text-red-700",
+};
+
 type PlanItem = {
   id: number;
   doctor_id: number;
@@ -70,22 +77,29 @@ export default function PlanEditor({
           <button
             type="button"
             onClick={() => setEditing(true)}
-            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100"
+            className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-brand-light/40"
           >
             ✏️ ویرایش برنامه
           </button>
         </div>
         {items.length > 0 && (
-          <ul className="mt-3 divide-y divide-neutral-100 border-t border-neutral-100">
+          <ul className="mt-3 divide-y divide-brand-light/60 border-t border-brand-light/60">
             {items.map((it) => (
-              <li key={it.id} className="flex items-center justify-between py-2 text-sm">
-                <span className="text-neutral-800">{it.doctor_name}</span>
+              <li key={it.id} className={`flex items-center justify-between rounded-lg px-2 py-2 text-sm ${it.done ? "bg-brand-light/20" : ""}`}>
+                <span className="text-neutral-800">
+                  {it.done && <span className="ml-1 text-brand-dark">✓</span>}
+                  {it.doctor_name}
+                </span>
                 {it.done ? (
-                  <span className="rounded-full bg-brand-light px-2 py-0.5 text-xs font-medium text-brand-dark">
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${
+                      it.outcome ? OUTCOME_BADGE[it.outcome] : "bg-brand-light text-brand-dark"
+                    }`}
+                  >
                     {it.outcome ? OUTCOME_LABELS[it.outcome] : "انجام شد"}
                   </span>
                 ) : (
-                  <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">در انتظار</span>
+                  <span className="rounded-full bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">در انتظار</span>
                 )}
               </li>
             ))}
@@ -98,14 +112,14 @@ export default function PlanEditor({
   return (
     <div>
       <p className="mb-2 text-xs text-neutral-500">پزشکانی که این هفته برای این ویزیتور برنامه‌ریزی می‌شوند را انتخاب کنید:</p>
-      <div className="max-h-64 overflow-y-auto rounded-lg border border-neutral-200">
+      <div className="max-h-64 overflow-y-auto rounded-lg border border-brand-light">
         {allDoctors.map((d) => {
           const locked = doneIds.has(d.id);
           return (
             <label
               key={d.id}
-              className={`flex items-center gap-2 border-b border-neutral-100 px-3 py-2 text-sm last:border-b-0 ${
-                locked ? "bg-neutral-50 text-neutral-400" : "text-neutral-800"
+              className={`flex items-center gap-2 border-b border-brand-light/60 px-3 py-2 text-sm last:border-b-0 ${
+                locked ? "bg-brand-light/20 text-neutral-400" : "text-neutral-800 hover:bg-brand-light/20"
               }`}
             >
               <input
@@ -113,7 +127,7 @@ export default function PlanEditor({
                 checked={selected.has(d.id)}
                 onChange={() => toggle(d.id)}
                 disabled={locked}
-                className="h-4 w-4"
+                className="h-4 w-4 accent-brand"
               />
               {d.name}
               {locked && <span className="mr-auto text-xs">(ویزیت شده)</span>}
@@ -127,7 +141,7 @@ export default function PlanEditor({
           type="button"
           onClick={onSave}
           disabled={saving}
-          className="rounded-lg bg-brand px-3 py-1.5 text-xs font-semibold text-white hover:bg-brand-dark disabled:opacity-60"
+          className="rounded-lg bg-brand-gradient px-3 py-1.5 text-xs font-semibold text-white shadow-lg shadow-brand/25 hover:opacity-90 disabled:opacity-60"
         >
           {saving ? "..." : "ذخیره برنامه"}
         </button>
@@ -137,7 +151,7 @@ export default function PlanEditor({
             setSelected(new Set(items.map((i) => i.doctor_id)));
             setEditing(false);
           }}
-          className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100"
+          className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-brand-light/40"
         >
           انصراف
         </button>

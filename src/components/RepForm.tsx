@@ -125,7 +125,7 @@ export default function RepForm({ initial }: { initial?: RepInitial }) {
       <button
         type="submit"
         disabled={saving}
-        className="w-full rounded-lg bg-brand py-2.5 font-semibold text-white hover:bg-brand-dark disabled:opacity-60 sm:w-auto sm:px-8"
+        className="w-full rounded-lg bg-brand-gradient py-2.5 font-semibold text-white shadow-lg shadow-brand/25 transition hover:opacity-90 disabled:opacity-60 sm:w-auto sm:px-8"
       >
         {saving ? "در حال ذخیره..." : editing ? "ذخیره تغییرات" : "ثبت ویزیتور"}
       </button>

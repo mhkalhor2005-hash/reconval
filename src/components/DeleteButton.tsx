@@ -46,12 +46,12 @@ export default function DeleteButton({
   if (confirming) {
     return (
       <span className="inline-flex flex-wrap items-center gap-1.5">
-        <span className="text-xs text-red-700">{confirmLabel}</span>
+        <span className="text-xs font-medium text-red-700">{confirmLabel}</span>
         <button
           type="button"
           onClick={doDelete}
           disabled={busy}
-          className="rounded-lg bg-red-600 px-2.5 py-1 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50"
+          className="rounded-lg bg-red-600 px-2.5 py-1.5 text-xs font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
         >
           {busy ? "..." : "بله، حذف کن"}
         </button>
@@ -59,7 +59,7 @@ export default function DeleteButton({
           type="button"
           onClick={() => setConfirming(false)}
           disabled={busy}
-          className="rounded-lg border border-neutral-300 px-2.5 py-1 text-xs font-medium hover:bg-neutral-100"
+          className="rounded-lg border border-neutral-300 px-2.5 py-1.5 text-xs font-medium transition hover:bg-brand-light/40"
         >
           انصراف
         </button>
@@ -72,7 +72,7 @@ export default function DeleteButton({
       <button
         type="button"
         onClick={() => setConfirming(true)}
-        className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-50"
+        className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:bg-red-50"
       >
         {label}
       </button>

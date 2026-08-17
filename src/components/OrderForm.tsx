@@ -68,7 +68,7 @@ export default function OrderForm({ pharmacyId }: { pharmacyId: number }) {
       <button
         type="submit"
         disabled={saving}
-        className="rounded-lg bg-brand px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-dark disabled:opacity-60"
+        className="rounded-lg bg-brand-gradient px-3 py-1.5 text-sm font-semibold text-white shadow-lg shadow-brand/25 transition hover:opacity-90 disabled:opacity-60"
       >
         {saving ? "..." : "+ ثبت سفارش"}
       </button>

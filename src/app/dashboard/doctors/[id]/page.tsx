@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDoctor } from "@/lib/repo/doctors";
 import { doctorVisitHistory, OUTCOME_LABELS, type Outcome } from "@/lib/repo/plans";
+import { formatJalaliDateTime } from "@/lib/date";
 import DeleteButton from "@/components/DeleteButton";
 
 const FACILITY_LABEL: Record<string, string> = {
@@ -100,7 +101,7 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
                   {h.done ? (h.outcome ? OUTCOME_LABELS[h.outcome] : "—") : "برنامه‌ریزی‌شده (هنوز انجام نشده)"}
                 </td>
                 <td className="px-4 py-2.5 text-neutral-600">
-                  {h.completed_at ? new Date(h.completed_at).toLocaleString("fa-IR") : "—"}
+                  {h.completed_at ? formatJalaliDateTime(h.completed_at) : "—"}
                 </td>
                 <td className="px-4 py-2.5 text-neutral-500">{h.note || "—"}</td>
                 <td className="px-4 py-2.5 text-left">

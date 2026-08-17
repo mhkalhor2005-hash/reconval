@@ -1,13 +1,13 @@
 {
   "name": "ریکنوال | مدیریت فروش و ویزیت پزشکان",
   "short_name": "ریکنوال",
-  "description": "پنل هوشمند مدیریت فروش، ویزیت پزشکان و نمونه دارویی",
+  "description": "پنل هوشمند مدیریت فروش، ویزیت پزشکان و داروخانه‌ها",
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#f7f8f6",
-  "theme_color": "#1F4E3D",
+  "background_color": "#fdf8fa",
+  "theme_color": "#C6407E",
   "lang": "fa",
   "dir": "rtl",
   "icons": [

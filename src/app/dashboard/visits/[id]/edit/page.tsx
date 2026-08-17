@@ -18,9 +18,12 @@ export default async function EditVisitPage({ params }: { params: Promise<{ id: 
 
   return (
     <div className="max-w-2xl space-y-4">
-      <div>
-        <h1 className="text-xl font-bold text-neutral-900">ویرایش نتیجه ویزیت</h1>
-        <p className="text-sm text-neutral-500">{visit.doctor_name}</p>
+      <div className="flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-light text-lg">📝</div>
+        <div>
+          <h1 className="text-xl font-bold text-ink">ویرایش نتیجه ویزیت</h1>
+          <p className="text-sm text-neutral-500">{visit.doctor_name}</p>
+        </div>
       </div>
       <EditVisitForm
         visitId={visit.id}

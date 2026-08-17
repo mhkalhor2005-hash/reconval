@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { listPharmacies } from "@/lib/repo/pharmacies";
+import { formatJalaliDate } from "@/lib/date";
 
 function orderRecencyClass(dateStr: string) {
   const days = Math.floor((Date.now() - new Date(dateStr).getTime()) / 86400000);
@@ -40,7 +41,7 @@ export default async function RepPharmaciesPage() {
                 <span
                   className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${orderRecencyClass(p.last_order_date)}`}
                 >
-                  📦 {new Date(p.last_order_date).toLocaleDateString("fa-IR")} · {p.last_order_qty} عدد
+                  📦 {formatJalaliDate(p.last_order_date)} · {p.last_order_qty} عدد
                 </span>
               ) : (
                 <span className="text-xs text-neutral-400">بدون سفارش ثبت‌شده</span>

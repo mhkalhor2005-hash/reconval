@@ -2,6 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import { repPerformance } from "@/lib/repo/dashboard";
+import ProductStrip from "@/components/ProductStrip";
 
 export default async function RepHomePage() {
   const user = await getSessionUser();
@@ -56,6 +57,8 @@ export default async function RepHomePage() {
           <p className="mt-1 text-sm font-medium text-neutral-700">داروخانه‌ها</p>
         </Link>
       </div>
+
+      <ProductStrip />
     </div>
   );
 }

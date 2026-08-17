@@ -1,9 +1,5 @@
 import { getDb } from "@/lib/db";
 
-function isoDaysAgo(days: number) {
-  return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
-}
-
 function isoStartOfTodayUTC() {
   const d = new Date();
   d.setUTCHours(0, 0, 0, 0);
@@ -17,6 +13,12 @@ function isoStartOfMonthUTC() {
   return d.toISOString();
 }
 
+function isoDaysAgo(days: number) {
+  return new Date(Date.now() - days * 24 * 60 * 60 * 1000).toISOString();
+}
+
+// Rep performance is driven entirely by completed plan_visits — a "visit"
+// only exists once a rep checks a planned doctor off with an outcome.
 export async function repPerformance() {
   const db = getDb();
   const monthStart = isoStartOfMonthUTC();
@@ -24,46 +26,15 @@ export async function repPerformance() {
   return db
     .prepare(
       `SELECT u.id, u.name, u.region, u.monthly_target,
-         COUNT(CASE WHEN v.checkin_at >= ? THEN 1 END) as visits_this_month,
-         COUNT(CASE WHEN v.checkin_at >= ? THEN 1 END) as visits_today
+         COUNT(CASE WHEN pv.done = 1 AND pv.completed_at >= ? THEN 1 END) as visits_this_month,
+         COUNT(CASE WHEN pv.done = 1 AND pv.completed_at >= ? THEN 1 END) as visits_today
        FROM users u
-       LEFT JOIN visits v ON v.rep_id = u.id
+       LEFT JOIN plan_visits pv ON pv.rep_id = u.id
        WHERE u.role = 'REP' AND u.active = 1
        GROUP BY u.id
        ORDER BY u.name`
     )
     .all(monthStart, todayStart);
-}
-
-export async function sampleConsumption(sinceDays = 30) {
-  const db = getDb();
-  const since = isoDaysAgo(sinceDays);
-  return db
-    .prepare(
-      `SELECT p.name, p.type, p.unit_label, SUM(sd.qty) as total_qty, COUNT(DISTINCT sd.visit_id) as visit_count
-       FROM sample_deliveries sd
-       JOIN products p ON p.id = sd.product_id
-       JOIN visits v ON v.id = sd.visit_id
-       WHERE v.checkin_at >= ?
-       GROUP BY p.id ORDER BY total_qty DESC`
-    )
-    .all(since);
-}
-
-export async function visitsForMap(sinceDays = 14) {
-  const db = getDb();
-  const since = isoDaysAgo(sinceDays);
-  return db
-    .prepare(
-      `SELECT v.id, v.checkin_lat as lat, v.checkin_lng as lng, v.checkin_at, v.outcome,
-              d.name as doctor_name, u.name as rep_name
-       FROM visits v
-       JOIN doctors d ON d.id = v.doctor_id
-       JOIN users u ON u.id = v.rep_id
-       WHERE v.checkin_at >= ? AND v.checkin_lat IS NOT NULL
-       ORDER BY v.checkin_at DESC LIMIT 300`
-    )
-    .all(since);
 }
 
 export async function overviewCounts() {
@@ -74,10 +45,11 @@ export async function overviewCounts() {
     .prepare(
       `SELECT
         (SELECT COUNT(*) FROM doctors) as doctor_count,
+        (SELECT COUNT(*) FROM pharmacies) as pharmacy_count,
         (SELECT COUNT(*) FROM users WHERE role='REP' AND active=1) as rep_count,
-        (SELECT COUNT(*) FROM visits WHERE checkin_at >= ?) as visits_this_week,
-        (SELECT COUNT(*) FROM visits WHERE checkin_at >= ?) as visits_today,
-        (SELECT COUNT(*) FROM visits WHERE checkout_at IS NULL) as active_visits
+        (SELECT COUNT(*) FROM plan_visits WHERE done = 1 AND completed_at >= ?) as visits_this_week,
+        (SELECT COUNT(*) FROM plan_visits WHERE done = 1 AND completed_at >= ?) as visits_today,
+        (SELECT COUNT(*) FROM plan_visits WHERE done = 0) as pending_visits
       `
     )
     .get(weekStart, todayStart);

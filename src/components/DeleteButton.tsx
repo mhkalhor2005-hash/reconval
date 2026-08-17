@@ -32,7 +32,13 @@ export default function DeleteButton({
     }
     setConfirming(false);
     if (redirectTo) {
-      router.push(redirectTo);
+      // A plain router.push() here can serve a stale, already-prefetched
+      // RSC payload for the destination route (e.g. the sidebar nav link
+      // prefetches /dashboard/reps in the background), so the deleted row
+      // would still appear to be there. Force a real navigation instead —
+      // guarantees the destination is always fetched fresh from the server.
+      window.location.href = redirectTo;
+      return;
     }
     router.refresh();
   }

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getRep } from "@/lib/repo/users";
 import { recentVisitsForRep, OUTCOME_LABELS, type Outcome } from "@/lib/repo/plans";
+import { formatJalaliDateTime } from "@/lib/date";
 import DeleteButton from "@/components/DeleteButton";
 
 export default async function RepDetailPage({ params }: { params: Promise<{ id: string }> }) {
@@ -85,7 +86,7 @@ export default async function RepDetailPage({ params }: { params: Promise<{ id: 
                   )}
                 </td>
                 <td className="px-4 py-2.5 text-neutral-500">
-                  {v.completed_at ? new Date(v.completed_at).toLocaleString("fa-IR") : "—"}
+                  {v.completed_at ? formatJalaliDateTime(v.completed_at) : "—"}
                 </td>
               </tr>
             ))}

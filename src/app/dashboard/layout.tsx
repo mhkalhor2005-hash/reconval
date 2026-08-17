@@ -7,8 +7,9 @@ const navItems = [
   { href: "/dashboard", label: "نمای کلی", icon: "📊" },
   { href: "/dashboard/doctors", label: "پزشکان", icon: "🩺" },
   { href: "/dashboard/reps", label: "ویزیتورها", icon: "🧑‍💼" },
-  { href: "/dashboard/products", label: "نمونه و هدایا", icon: "💊" },
-  { href: "/dashboard/visits", label: "همه ویزیت‌ها", icon: "📋" },
+  { href: "/dashboard/pharmacies", label: "داروخانه‌ها", icon: "💊" },
+  { href: "/dashboard/plans", label: "برنامه هفتگی", icon: "📅" },
+  { href: "/dashboard/visits", label: "تاریخچه ویزیت‌ها", icon: "📋" },
 ];
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {

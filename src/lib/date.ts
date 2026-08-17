@@ -17,6 +17,9 @@ export function formatJalaliDate(value: string | number | Date): string {
 export function formatJalaliDateTime(value: string | number | Date): string {
   return new Date(value).toLocaleString("fa-IR", {
     timeZone: TEHRAN_TZ,
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
     hour: "2-digit",
     minute: "2-digit",
   });

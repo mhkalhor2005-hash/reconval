@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getDoctor, doctorVisitHistory } from "@/lib/repo/doctors";
 import { OUTCOME_LABELS, type Outcome } from "@/lib/repo/visits";
+import DeleteButton from "@/components/DeleteButton";
 
 const FACILITY_LABEL: Record<string, string> = {
   CLINIC: "کلینیک",
@@ -41,6 +42,11 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
             >
               ✏️ ویرایش
             </Link>
+            <DeleteButton
+              url={`/api/doctors/${id}`}
+              confirmLabel="این پزشک حذف شود؟"
+              redirectTo="/dashboard/doctors"
+            />
           </div>
         </div>
         <dl className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
@@ -96,9 +102,12 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
                 <td className="px-4 py-2.5">{h.outcome ? OUTCOME_LABELS[h.outcome] : "در حال انجام"}</td>
                 <td className="px-4 py-2.5 text-neutral-500">{h.note || "—"}</td>
                 <td className="px-4 py-2.5 text-left">
-                  <Link href={`/dashboard/visits/${h.id}/edit`} className="text-xs font-medium text-brand-dark hover:underline">
-                    ✏️ ویرایش
-                  </Link>
+                  <div className="flex items-center justify-end gap-2">
+                    <Link href={`/dashboard/visits/${h.id}/edit`} className="text-xs font-medium text-brand-dark hover:underline">
+                      ✏️ ویرایش
+                    </Link>
+                    <DeleteButton url={`/api/visits/${h.id}`} confirmLabel="این ویزیت حذف شود؟" label="🗑️" />
+                  </div>
                 </td>
               </tr>
             ))}

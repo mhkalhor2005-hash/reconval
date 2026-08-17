@@ -18,18 +18,23 @@ export default async function PharmacyDetailPage({ params }: { params: Promise<{
 
   return (
     <div className="max-w-3xl space-y-6">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-neutral-900">{pharmacy.name}</h1>
-        <DeleteButton
-          url={`/api/pharmacies/${id}`}
-          confirmLabel="این داروخانه حذف شود؟"
-          redirectTo="/dashboard/pharmacies"
-          label="🗑️ حذف داروخانه"
-        />
+      <div className="card p-5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-light text-lg">💊</div>
+            <h1 className="text-xl font-bold text-ink">{pharmacy.name}</h1>
+          </div>
+          <DeleteButton
+            url={`/api/pharmacies/${id}`}
+            confirmLabel="این داروخانه حذف شود؟"
+            redirectTo="/dashboard/pharmacies"
+            label="🗑️ حذف داروخانه"
+          />
+        </div>
       </div>
 
       <div className="card p-4">
-        <h2 className="mb-2 font-bold text-neutral-900">ویرایش اطلاعات</h2>
+        <h2 className="mb-2 font-bold text-ink">ویرایش اطلاعات</h2>
         <PharmacyForm
           initial={{
             id: pharmacy.id,
@@ -42,16 +47,19 @@ export default async function PharmacyDetailPage({ params }: { params: Promise<{
       </div>
 
       <div className="card p-4">
-        <h2 className="mb-3 font-bold text-neutral-900">ثبت سفارش جدید</h2>
+        <div className="mb-3 flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-light text-base">📦</div>
+          <h2 className="font-bold text-ink">ثبت سفارش جدید</h2>
+        </div>
         <OrderForm pharmacyId={pharmacy.id} />
       </div>
 
       <div className="card overflow-hidden">
-        <div className="border-b border-neutral-100 p-4">
-          <h2 className="font-bold text-neutral-900">تاریخچه سفارش‌ها</h2>
+        <div className="border-b border-brand-light/70 p-4">
+          <h2 className="font-bold text-ink">تاریخچه سفارش‌ها</h2>
         </div>
         <table className="w-full text-sm">
-          <thead className="bg-neutral-50 text-neutral-500">
+          <thead className="bg-brand-light/40 text-neutral-500">
             <tr>
               <th className="px-4 py-2 text-right font-medium">تاریخ</th>
               <th className="px-4 py-2 text-right font-medium">تعداد</th>
@@ -69,7 +77,7 @@ export default async function PharmacyDetailPage({ params }: { params: Promise<{
               </tr>
             )}
             {orders.map((o) => (
-              <tr key={o.id} className="border-t border-neutral-100">
+              <tr key={o.id} className="border-t border-brand-light/60 transition hover:bg-brand-light/20">
                 <td className="px-4 py-2.5 text-neutral-800">{new Date(o.order_date).toLocaleDateString("fa-IR")}</td>
                 <td className="px-4 py-2.5 text-neutral-800">{o.quantity}</td>
                 <td className="px-4 py-2.5 text-neutral-600">{o.rep_name}</td>

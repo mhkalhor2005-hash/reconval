@@ -29,9 +29,12 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
     <div className="max-w-3xl space-y-6">
       <div className="card p-5">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <div>
-            <h1 className="text-xl font-bold text-neutral-900">{doctor.name}</h1>
-            <p className="text-sm text-neutral-500">{doctor.specialty || "—"}</p>
+          <div className="flex items-start gap-3">
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-brand-light text-lg">🩺</div>
+            <div>
+              <h1 className="text-xl font-bold text-ink">{doctor.name}</h1>
+              <p className="text-sm text-neutral-500">{doctor.specialty || "—"}</p>
+            </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
             <span className="rounded-full bg-brand-light px-3 py-1 text-xs font-medium text-brand-dark">
@@ -39,7 +42,7 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
             </span>
             <Link
               href={`/dashboard/doctors/${id}/edit`}
-              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-neutral-100"
+              className="rounded-lg border border-neutral-300 px-3 py-1.5 text-xs font-medium hover:bg-brand-light/40"
             >
               ✏️ ویرایش
             </Link>
@@ -52,28 +55,28 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
         </div>
         <dl className="mt-4 grid grid-cols-1 gap-3 text-sm sm:grid-cols-2">
           <div>
-            <dt className="text-neutral-400">آدرس</dt>
+            <dt className="text-neutral-400">📍 آدرس</dt>
             <dd className="text-neutral-800">{doctor.address || "—"}</dd>
           </div>
           <div>
-            <dt className="text-neutral-400">تلفن</dt>
+            <dt className="text-neutral-400">☎️ تلفن</dt>
             <dd dir="ltr" className="text-left text-neutral-800">
               {doctor.phone || "—"}
             </dd>
           </div>
           <div className="sm:col-span-2">
-            <dt className="text-neutral-400">یادداشت (شامل خلاصه نتیجه ویزیت‌ها)</dt>
+            <dt className="text-neutral-400">📝 یادداشت (شامل خلاصه نتیجه ویزیت‌ها)</dt>
             <dd className="whitespace-pre-line text-neutral-800">{doctor.notes || "—"}</dd>
           </div>
         </dl>
       </div>
 
       <div className="card overflow-hidden">
-        <div className="border-b border-neutral-100 p-4">
-          <h2 className="font-bold text-neutral-900">تاریخچه ویزیت‌های برنامه‌ریزی‌شده ({history.length})</h2>
+        <div className="border-b border-brand-light/70 p-4">
+          <h2 className="font-bold text-ink">تاریخچه ویزیت‌های برنامه‌ریزی‌شده ({history.length})</h2>
         </div>
         <table className="w-full text-sm">
-          <thead className="bg-neutral-50 text-neutral-500">
+          <thead className="bg-brand-light/40 text-neutral-500">
             <tr>
               <th className="px-4 py-2 text-right font-medium">ویزیتور</th>
               <th className="px-4 py-2 text-right font-medium">وضعیت</th>
@@ -91,7 +94,7 @@ export default async function DoctorDetailPage({ params }: { params: Promise<{ i
               </tr>
             )}
             {history.map((h) => (
-              <tr key={h.id} className="border-t border-neutral-100">
+              <tr key={h.id} className="border-t border-brand-light/60 transition hover:bg-brand-light/20">
                 <td className="px-4 py-2.5 text-neutral-800">{h.rep_name}</td>
                 <td className="px-4 py-2.5">
                   {h.done ? (h.outcome ? OUTCOME_LABELS[h.outcome] : "—") : "برنامه‌ریزی‌شده (هنوز انجام نشده)"}

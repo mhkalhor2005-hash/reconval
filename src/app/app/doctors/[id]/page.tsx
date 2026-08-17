@@ -25,9 +25,12 @@ export default async function RepDoctorDetailPage({ params }: { params: Promise<
     <div className="space-y-4">
       <div className="card p-5">
         <div className="flex items-start justify-between gap-2">
-          <div>
-            <h1 className="text-lg font-bold text-neutral-900">{doctor.name}</h1>
-            <p className="text-sm text-neutral-500">{doctor.specialty || "—"}</p>
+          <div className="flex items-start gap-3">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-brand-light text-base">🩺</div>
+            <div>
+              <h1 className="text-lg font-bold text-ink">{doctor.name}</h1>
+              <p className="text-sm text-neutral-500">{doctor.specialty || "—"}</p>
+            </div>
           </div>
           <span className="rounded-full bg-brand-light px-3 py-1 text-xs font-medium text-brand-dark">
             {FACILITY_LABEL[doctor.facility_type] ?? doctor.facility_type}
@@ -48,18 +51,18 @@ export default async function RepDoctorDetailPage({ params }: { params: Promise<
       </div>
 
       <div className="card overflow-hidden">
-        <div className="border-b border-neutral-100 p-3">
-          <h2 className="text-sm font-bold text-neutral-900">تاریخچه تعاملات</h2>
+        <div className="border-b border-brand-light/70 p-3">
+          <h2 className="text-sm font-bold text-ink">تاریخچه تعاملات</h2>
         </div>
-        <ul className="divide-y divide-neutral-100">
+        <ul className="divide-y divide-brand-light/60">
           {history.length === 0 && <li className="p-4 text-center text-sm text-neutral-400">هنوز ویزیتی ثبت نشده.</li>}
           {history.map((h) => (
-            <li key={h.id} className="flex items-center justify-between p-3 text-sm">
+            <li key={h.id} className="flex items-center justify-between p-3 text-sm transition hover:bg-brand-light/20">
               <span className="text-neutral-500">
                 {h.completed_at ? new Date(h.completed_at).toLocaleDateString("fa-IR") : "—"}
               </span>
               <span className="text-neutral-500">{h.rep_name}</span>
-              <span className="font-medium text-neutral-800">
+              <span className="font-medium text-ink">
                 {h.done ? (h.outcome ? OUTCOME_LABELS[h.outcome] : "—") : "برنامه‌ریزی‌شده"}
               </span>
             </li>

@@ -1,5 +1,6 @@
 import { getSessionUser } from "@/lib/auth";
 import { recentVisitsForRep, OUTCOME_LABELS, type Outcome } from "@/lib/repo/plans";
+import { formatJalaliDateTime } from "@/lib/date";
 import { redirect } from "next/navigation";
 
 const OUTCOME_BADGE: Record<Outcome, string> = {
@@ -47,7 +48,7 @@ export default async function MyVisitsPage() {
               )}
             </div>
             {v.completed_at && (
-              <p className="mt-1 text-xs text-neutral-500">{new Date(v.completed_at).toLocaleString("fa-IR")}</p>
+              <p className="mt-1 text-xs text-neutral-500">{formatJalaliDateTime(v.completed_at)}</p>
             )}
           </li>
         ))}

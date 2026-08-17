@@ -39,20 +39,20 @@ export default async function RepHomePage() {
       )}
 
       <Link
-        href="/app/doctors"
+        href="/app/plan"
         className="block rounded-xl bg-brand p-4 text-center font-semibold text-white shadow-sm transition hover:bg-brand-dark"
       >
-        ▶ شروع ویزیت جدید
+        📅 برنامه هفتگی من
       </Link>
 
       <div className="grid grid-cols-2 gap-3">
-        <Link href="/app/visits" className="card p-4 text-center">
-          <p className="text-2xl">📋</p>
-          <p className="mt-1 text-sm font-medium text-neutral-700">ویزیت‌های من</p>
+        <Link href="/app/doctors" className="card p-4 text-center">
+          <p className="text-2xl">🩺</p>
+          <p className="mt-1 text-sm font-medium text-neutral-700">پزشکان</p>
         </Link>
-        <Link href="/app/inventory" className="card p-4 text-center">
+        <Link href="/app/pharmacies" className="card p-4 text-center">
           <p className="text-2xl">💊</p>
-          <p className="mt-1 text-sm font-medium text-neutral-700">موجودی من</p>
+          <p className="mt-1 text-sm font-medium text-neutral-700">داروخانه‌ها</p>
         </Link>
       </div>
     </div>

@@ -2,13 +2,13 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getSessionUser } from "@/lib/auth";
 import SignOutButton from "@/components/SignOutButton";
-import OfflineSyncManager from "@/components/OfflineSyncManager";
 
 const navItems = [
   { href: "/app", label: "خانه", icon: "🏠" },
+  { href: "/app/plan", label: "برنامه هفتگی", icon: "📅" },
   { href: "/app/doctors", label: "پزشکان", icon: "🩺" },
+  { href: "/app/pharmacies", label: "داروخانه‌ها", icon: "💊" },
   { href: "/app/visits", label: "ویزیت‌های من", icon: "📋" },
-  { href: "/app/inventory", label: "موجودی من", icon: "💊" },
 ];
 
 export default async function RepAppLayout({ children }: { children: React.ReactNode }) {
@@ -35,8 +35,6 @@ export default async function RepAppLayout({ children }: { children: React.React
       </header>
 
       <main className="flex-1 bg-neutral-50 p-4 pb-24">{children}</main>
-
-      <OfflineSyncManager />
 
       <nav className="fixed inset-x-0 bottom-0 z-30 flex border-t border-neutral-200 bg-white">
         {navItems.map((item) => (

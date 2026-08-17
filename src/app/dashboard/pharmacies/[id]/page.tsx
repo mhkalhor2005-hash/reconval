@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getPharmacy, listPharmacyOrders } from "@/lib/repo/pharmacies";
+import { formatJalaliDate } from "@/lib/date";
 import PharmacyForm from "@/components/PharmacyForm";
 import OrderForm from "@/components/OrderForm";
 import DeleteButton from "@/components/DeleteButton";
@@ -78,7 +79,7 @@ export default async function PharmacyDetailPage({ params }: { params: Promise<{
             )}
             {orders.map((o) => (
               <tr key={o.id} className="border-t border-brand-light/60 transition hover:bg-brand-light/20">
-                <td className="px-4 py-2.5 text-neutral-800">{new Date(o.order_date).toLocaleDateString("fa-IR")}</td>
+                <td className="px-4 py-2.5 text-neutral-800">{formatJalaliDate(o.order_date)}</td>
                 <td className="px-4 py-2.5 text-neutral-800">{o.quantity}</td>
                 <td className="px-4 py-2.5 text-neutral-600">{o.rep_name}</td>
                 <td className="px-4 py-2.5 text-neutral-500">{o.note || "—"}</td>

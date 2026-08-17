@@ -1,5 +1,7 @@
 import Link from "next/link";
 import Logo from "@/components/Logo";
+import ProductShowcase from "@/components/ProductShowcase";
+import Reveal from "@/components/Reveal";
 
 const features = [
   {
@@ -37,39 +39,45 @@ export default function Home() {
       <main className="relative flex-1 overflow-hidden">
         <div className="ribbon-watermark" />
         <section className="relative z-10 mx-auto max-w-6xl px-6 py-20 text-center">
-          <span className="rounded-full bg-brand-light px-4 py-1 text-sm font-medium text-brand-dark">
-            پلتفرم اختصاصی تیم فروش ریکنوال
-          </span>
-          <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-extrabold leading-[1.4] text-ink sm:text-5xl">
-            مدیریت هوشمند فروش و ویزیت پزشکان
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-neutral-600">
-            یک پنل مدیریتی و اپلیکیشن سبک برای ویزیتورها؛ برنامه‌ریزی هفتگی ویزیت پزشکان، مدیریت
-            سفارش داروخانه‌ها، و دیدن وضعیت واقعی میدان در یک نگاه.
-          </p>
-          <div className="mt-8 flex items-center justify-center gap-3">
-            <Link
-              href="/login"
-              className="rounded-lg bg-brand-gradient px-6 py-3 font-semibold text-white shadow-lg shadow-brand/25 transition hover:opacity-90"
-            >
-              ورود به پنل
-            </Link>
-          </div>
+          <Reveal>
+            <span className="rounded-full bg-brand-light px-4 py-1 text-sm font-medium text-brand-dark">
+              پلتفرم اختصاصی تیم فروش ریکنوال
+            </span>
+            <h1 className="mx-auto mt-6 max-w-3xl text-4xl font-extrabold leading-[1.4] text-ink sm:text-5xl">
+              مدیریت هوشمند فروش و ویزیت پزشکان
+            </h1>
+            <p className="mx-auto mt-5 max-w-2xl text-lg leading-8 text-neutral-600">
+              یک پنل مدیریتی و اپلیکیشن سبک برای ویزیتورها؛ برنامه‌ریزی هفتگی ویزیت پزشکان، مدیریت
+              سفارش داروخانه‌ها، و دیدن وضعیت واقعی میدان در یک نگاه.
+            </p>
+            <div className="mt-8 flex items-center justify-center gap-3">
+              <Link
+                href="/login"
+                className="rounded-lg bg-brand-gradient px-6 py-3 font-semibold text-white shadow-lg shadow-brand/25 transition hover:opacity-90"
+              >
+                ورود به پنل
+              </Link>
+            </div>
+          </Reveal>
         </section>
 
-        <section className="relative z-10 mx-auto max-w-6xl px-6 pb-24">
+        <section className="relative z-10 mx-auto max-w-6xl px-6 pb-20">
           <div className="grid gap-6 sm:grid-cols-3">
-            {features.map((f) => (
-              <div key={f.title} className="card card-hover p-6 text-right">
-                <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-light text-2xl">
-                  {f.icon}
+            {features.map((f, i) => (
+              <Reveal key={f.title} delay={i * 100}>
+                <div className="card card-hover p-6 text-right">
+                  <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-brand-light text-2xl">
+                    {f.icon}
+                  </div>
+                  <h3 className="mb-2 text-lg font-bold text-ink">{f.title}</h3>
+                  <p className="text-sm leading-7 text-neutral-600">{f.desc}</p>
                 </div>
-                <h3 className="mb-2 text-lg font-bold text-ink">{f.title}</h3>
-                <p className="text-sm leading-7 text-neutral-600">{f.desc}</p>
-              </div>
+              </Reveal>
             ))}
           </div>
         </section>
+
+        <ProductShowcase />
       </main>
 
       <footer className="border-t border-brand-light/70 py-6 text-center text-sm text-neutral-500">

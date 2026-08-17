@@ -118,3 +118,38 @@ select:focus {
   font-family: "Vazirmatn Variable", Tahoma, sans-serif;
   border-radius: 0.9rem;
 }
+
+/* Subtle CSS-only crossfade carousel used by ProductStrip — no JS needed. */
+@keyframes product-crossfade {
+  0% {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+  6% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  26%,
+  100% {
+    opacity: 0;
+    transform: scale(1.03);
+  }
+}
+
+.product-strip-slide {
+  animation-name: product-crossfade;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-fill-mode: backwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .product-strip-slide {
+    animation: none;
+    opacity: 1;
+  }
+}

@@ -22,7 +22,7 @@ export default async function EditDoctorPage({ params }: { params: Promise<{ id:
 
   return (
     <div className="max-w-2xl space-y-4">
-      <h1 className="text-xl font-bold text-neutral-900">ویرایش اطلاعات پزشک</h1>
+      <h1 className="text-xl font-bold text-ink">ویرایش اطلاعات پزشک</h1>
       <DoctorForm basePath="/dashboard" initial={plainDoctor} />
     </div>
   );

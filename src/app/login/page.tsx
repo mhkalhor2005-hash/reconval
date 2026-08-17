@@ -2,7 +2,16 @@
 
 import { useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import Image from "next/image";
 import Logo from "@/components/Logo";
+import Reveal from "@/components/Reveal";
+
+const LOGIN_PRODUCTS = [
+  "/products/sunscreen-tinted-dark-spot.webp",
+  "/products/wrinkle-cream.webp",
+  "/products/night-cream-dark-spot.webp",
+  "/products/eye-cream-dark-circles.webp",
+];
 
 function LoginForm() {
   const router = useRouter();
@@ -80,6 +89,20 @@ function LoginForm() {
             {loading ? "در حال ورود..." : "ورود"}
           </button>
         </form>
+
+        <Reveal delay={200} className="mt-6">
+          <p className="mb-2 text-center text-[11px] font-medium text-neutral-400">محصولات ریکنوال</p>
+          <div className="flex items-center justify-center gap-3">
+            {LOGIN_PRODUCTS.map((src) => (
+              <div
+                key={src}
+                className="relative h-11 w-11 overflow-hidden rounded-full border-2 border-white shadow-sm shadow-brand/10 transition-transform duration-300 hover:scale-110"
+              >
+                <Image src={src} alt="محصول ریکنوال" fill sizes="44px" className="object-cover" />
+              </div>
+            ))}
+          </div>
+        </Reveal>
       </div>
     </div>
   );

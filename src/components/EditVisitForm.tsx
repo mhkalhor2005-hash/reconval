@@ -31,7 +31,7 @@ export default function EditVisitForm({
     e.preventDefault();
     setError("");
     setSaving(true);
-    const res = await fetch(`/api/visits/${visitId}`, {
+    const res = await fetch(`/api/plan-visits/${visitId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ outcome, note }),
